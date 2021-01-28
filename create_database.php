@@ -16,22 +16,13 @@
     {
         echo "Database created successfully";
         $created = true;
-    } 
-    else
-    {
-        echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
-    }
-    
-    if($created)
-    {
         $sql = "CREATE TABLE MyGuests
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             user VARCHAR(60) NOT NULL,
             passwd VARCHAR(60) NOT NULL,
             salt VARCHAR(60) NOT NULL,
-            reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-
+            login_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         // ! Needs to be removed from here
         $conn = mysqli_connect("localhost:3306", "root", "", "tt");
@@ -41,7 +32,12 @@
         }
 
         mysqli_close($conn);
+    } 
+    else
+    {
+        echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
     }
+    
     
     // Close connection
     mysqli_close($link);

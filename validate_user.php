@@ -1,5 +1,6 @@
 <?php
-    //TODO hash and salt the password
+    session_start();
+    //TODO hash and session_id the password
     if(isset($_POST['username']) && isset($_POST['pass']))
     {
         $username = $_POST['username'];
@@ -19,17 +20,23 @@
 
         $sql = "SELECT user, passwd FROM MyGuests WHERE user='$username' AND passwd='$password' ";
         $result = mysqli_query($conn, $sql);
+
         if(mysqli_num_rows($result) > 0)
         {
-            if (session_status() == PHP_SESSION_NONE)
-            {
-                session_start();
-                $_SESSION["name"] = $username;
-                header('Location: profile.html');
-            }
+            session_unset();
+            session_destroy();
+            $sql = "UPDATE MyGuests SET login_date = CURRENT_TIMESTAMP WHERE user='$username' AND passwd='$password'";
+            $result = mysqli_query($conn, $sql);
+            session_id(generateRandomSessionID());
+            session_start(); 
+            $_SESSION["id_s"] = session_id();
+            $_SESSION["name"] = $username;        
+            #echo $_SESSION["id_s"];
+            header('Location: profile.php');
         }
         else
         {
+            session_destroy();
             echo "Bad credentials";
         }
     }
@@ -37,13 +44,13 @@
     function generateRandomSessionID()
     {
         $length = 64;
-        $characters = '0123456789!@#$%^&*()|}{:[]<>?/.,|\~`abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $salt = "";
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $session_id = "";
         for($i = 0 ; $i < $length; $i++)
         {
             $index = rand(0, strlen($characters) -1);
-            $salt .= $characters[$index];
+            $session_id .= $characters[$index];
         }
-        return $salt;
+        return $session_id;
     }
 ?>

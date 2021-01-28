@@ -1,3 +1,9 @@
+<?php
+	session_start();
+	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
+	{
+		echo $_SESSION["id_s"];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,14 +45,20 @@
                             Welcome
                             <?php
                                 echo $_SESSION['name'];
-                            ?> !
-                        </span>
+                            ?> 
+						</span>
+						<div class="flex-col-c p-t-30">
+							<span class="txt1 p-b-2">
+								<a href="logout.php" class="txt2">
+									Log out
+								</a>
+							</span>
+						</div>
                     </form>
                 </div>
             </div>
         </div>
     </form>
-	
 
 	<div id="dropDownSelect1"></div>
 	
@@ -68,4 +80,11 @@
 	<script src="js/main.js"></script>
 
 </body>
+<?php
+	}
+	else
+	{
+		echo "Not the good session id";
+	}
+?>
 </html>
