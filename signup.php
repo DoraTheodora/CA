@@ -12,7 +12,9 @@
     {
         die("Connection failed: " . mysqli_connect_error());
     }
-    $sql = "INSERT INTO MyGuests(user, passwd, salt) VALUES ('$username', '$password', '$salt')";
+    $to_hash = $password . $salt;
+    $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
+    $sql = "INSERT INTO MyGuests(user, passwd, salt) VALUES ('$username', '$hash_pass', '$salt')";
     if(mysqli_query($conn, $sql))
     {
         echo "New record created successfully";
@@ -29,8 +31,8 @@
     // * Functions
     function generateSalt()
     {
-        $length = 64;
-        $characters = '0123456789!@#$%^&*()|}{:[]<>?/.,|\~`abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $length = 96;
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $salt = "";
         for($i = 0 ; $i < $length; $i++)
         {

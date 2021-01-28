@@ -19,9 +19,9 @@
         $sql = "CREATE TABLE MyGuests
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            user VARCHAR(60) NOT NULL,
-            passwd VARCHAR(60) NOT NULL,
-            salt VARCHAR(60) NOT NULL,
+            user VARCHAR(120) NOT NULL,
+            passwd VARCHAR(120) NOT NULL,
+            salt VARCHAR(120) NOT NULL,
             login_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
         )";
         // ! Needs to be removed from here
