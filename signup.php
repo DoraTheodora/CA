@@ -1,6 +1,5 @@
 <?php
-    // ! Needs to be removed from here
-    $conn = mysqli_connect("localhost:3306", "root", "", "tt");
+    include 'conf.php';
 
     //TODO hash and salt the password
     $username = $_POST['username'];

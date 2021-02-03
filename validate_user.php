@@ -12,12 +12,10 @@
         header('Location: index.html');
     }
 
-    // * Methods
+    // * Functions ---------------------------------------------------------------------------------------------------------
     function validateUser($username, $password)
     {
-        // ! Needs to be removed from here
-        $conn = mysqli_connect("localhost:3306", "root", "", "tt");
-
+        include 'conf.php';
         $sql = "SELECT salt, passwd FROM MyGuests WHERE user='$username'";
         $result = mysqli_query($conn, $sql);
         if(mysqli_num_rows($result) > 0)
