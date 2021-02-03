@@ -37,7 +37,7 @@
                 {
                     session_unset();
                     session_destroy();
-                    $sql = "UPDATE MyGuests SET login_date = CURRENT_TIMESTAMP WHERE user='$username' AND passwd='$hash_pass'";
+                    $sql = "UPDATE MyGuests SET login_date = CURRENT_TIMESTAMP WHERE user='$username' AND passwd='$pass'";
                     $result = mysqli_query($conn, $sql);
                     session_id(generateRandomSessionID());
                     session_start(); 
