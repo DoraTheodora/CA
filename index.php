@@ -1,3 +1,11 @@
+<?php
+	session_start();
+	if(!isset($_SESSION['login_attempts']))
+	{
+		$_SESSION['login_attempts'] = 0;
+	}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +36,6 @@
 <!--===============================================================================================-->
 </head>
 <body>
-	<?php session_start() ?>
 	<div class="limiter">
         <span class="author p-b-1" > Theodora Tataru, C00231174</span> <br>
         <span class="author p-b-1" > 2021</span>
@@ -75,7 +82,8 @@
                         <a href="create_database.php" class="txt2 p-t-100">
 							Create Database
 						</a>
-
+						<br>
+						<?php echo "Login attempts ". $_SESSION['login_attempts']; ?>
                     </div>
                 </form>
             </div>

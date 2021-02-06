@@ -1,7 +1,6 @@
 <?php
     include 'conf.php';
 
-    //TODO hash and salt the password
     $username = $_POST['username'];
     $password = $_POST['pass'];
    
@@ -31,7 +30,7 @@
         if(mysqli_query($conn, $sql))
         {
             echo "<script>alert('Account created!')</script>";
-            header('Refresh:0 url=index.html');
+            header('Refresh:0 url=index.php');
         } 
         else 
         {

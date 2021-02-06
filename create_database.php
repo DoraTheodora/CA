@@ -1,11 +1,11 @@
 <?php
+    include 'conf.php';
     /* Attempt MySQL server connection. Assuming you are running MySQL
     server with default setting (user 'root' with no password) */
     // ! Needs to be removed from here
-    $link = mysqli_connect("localhost:3306", "root", "");
     $created = false;
     // Check connection
-    if($link === false){
+    if($conn === false){
         die("ERROR: Could not connect. " . mysqli_connect_error());
     }
     
@@ -22,10 +22,9 @@
             user VARCHAR(120) NOT NULL,
             passwd VARCHAR(120) NOT NULL,
             salt VARCHAR(120) NOT NULL,
-            login_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            login_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            locked_until TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )";
-        // ! Needs to be removed from here
-        $conn = mysqli_connect("localhost:3306", "root", "", "tt");
         if(mysqli_query($conn, $sql))
         {
             echo "\n Table created!";

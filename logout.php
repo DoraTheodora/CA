@@ -4,5 +4,5 @@
     session_unset();
     session_destroy();
     echo session_id();
-    header('Location: index.html');
+    header('Location: index.php');
 ?>

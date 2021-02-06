@@ -1,21 +1,45 @@
 <?php
     session_start();
-    //TODO hash and session_id the password
-    if(isset($_POST['username']) && isset($_POST['pass']))
+    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']))
     {
         $username = $_POST['username'];
         $password = $_POST['pass'];
-        validateUser($username, $password);
+        check_if_user_is_locked($username, $password);
     }
     else
     {
-        header('Location: index.html');
+        header('Location: index.php');
     }
 
-    // * Functions ---------------------------------------------------------------------------------------------------------
+// * Functions ---------------------------------------------------------------------------------------------------------
+    function check_if_user_is_locked($username, $password)
+    {
+        include 'conf.php';
+        $sql = "SELECT locked_until FROM MyGuests WHERE user='$username'";
+        $suspiciousUser = mysqli_query($conn, $sql);
+        $start_date_time = date("Y-m-d H:i:s");
+        if(mysqli_num_rows($suspiciousUser) > 0)
+        {
+            $details = mysqli_fetch_assoc($suspiciousUser);
+            if($details['locked_until'] >  $start_date_time)
+            {
+                $time_left = $details['locked_until'] - $start_date_time;
+                echo "<script>
+                alert('Sorry you are still locked out !'); 
+                    window.location.href='index.php';
+                </script>";
+            }
+            else
+            {
+                validateUser($username, $password);
+            }
+        }
+    }
+
     function validateUser($username, $password)
     {
         include 'conf.php';
+        $_SESSION['login_attempts']++;
         $sql = "SELECT salt, passwd FROM MyGuests WHERE user='$username'";
         $result = mysqli_query($conn, $sql);
         if(mysqli_num_rows($result) > 0)
@@ -42,24 +66,46 @@
                     $_SESSION["id_s"] = session_id();
                     $_SESSION["name"] = $username;        
                     header('Location: profile.php');
+                    $_SESSION['login_attempts'] = 0;
                 }
                 else
                 {
                     echo "ERROR: Could not able to execute $sql. " . mysqli_error($login_user);
-                    session_destroy();
                 }  
             }  
             else
             {
-                session_destroy();
-                echo "Bad credentials";
+                echo "<script>
+                        alert('Username or password incorrect! Please try again'); 
+                     </script>";
+
+                if($_SESSION['login_attempts']%3 == 0)
+                {
+                    $sql = "SELECT locked_until FROM MyGuests WHERE user='$username'";
+                    $suspiciousUser = mysqli_query($conn, $sql);
+                    if(mysqli_num_rows($suspiciousUser) > 0)
+                    {
+                        $start_date_time = date("Y-m-d H:i:s");
+                        $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
+                        $sql = "UPDATE MyGuests SET locked_until = '$locked_until' WHERE user='$username'";
+                        mysqli_query($conn, $sql);
+                    }
+                    //TODO: What is the user does not exists
+                }
+                else
+                {
+                    echo "<script>
+                            window.location.href='index.php';
+                        </script>";
+                }
             }  
         }
         else
         {
-            echo "First ELSE";
-            session_destroy();
-            echo "Bad credentials";
+            echo "<script>
+                    alert('Username or password incorrect! Please try again'); 
+                    window.location.href='index.php';
+                </script>";
         }
     }
 
