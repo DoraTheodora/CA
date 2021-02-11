@@ -1,6 +1,6 @@
 <?php
     session_start();
-    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']))
+    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']) && isset($_SESSION['ip']) && isset($_SESSION['clientAgent']))
     {
         $username = $_POST['username'];
         $password = $_POST['pass'];
@@ -12,6 +12,37 @@
     }
 
 // * Functions ---------------------------------------------------------------------------------------------------------
+    function check_if_non_user_is_blocked()
+    {
+        include 'conf.php';
+
+        $ip = $_SESSION['ip'];
+        $userAgent = $_SESSION['clientAgent'];
+        $sql = "SELECT locked_until FROM NoGuests WHERE ip='$ip' AND clientAgent='$userAgent'";
+        $suspiciousUser = mysqli_query($conn, $sql);
+        $start_date_time = date("Y-m-d H:i:s"); 
+        echo mysqli_num_rows($suspiciousUser); 
+        if(mysqli_num_rows($suspiciousUser) > 0)
+        {
+            $details = mysqli_fetch_assoc($suspiciousUser);
+            if($details['locked_until'] >  $start_date_time)
+            {
+                echo "<script>
+                alert('Sorry you are still locked out !'); 
+                    window.location.href='index.php';
+                </script>";
+            }
+            else
+            {
+                echo "Here";
+            }
+        }
+        else
+        {
+            echo "Nothing from the database";
+        }
+    }
+
     function check_if_user_is_locked($username, $password)
     {
         include 'conf.php';
@@ -23,7 +54,6 @@
             $details = mysqli_fetch_assoc($suspiciousUser);
             if($details['locked_until'] >  $start_date_time)
             {
-                $time_left = $details['locked_until'] - $start_date_time;
                 echo "<script>
                 alert('Sorry you are still locked out !'); 
                     window.location.href='index.php';
@@ -36,34 +66,18 @@
         }
         else
         {
-            //TODO: if the used does not exist
-            echo  'User IP Address - '.getIPAddress()." Client agent: ".getClientAgent();  
+            //TODO: This is not working!
+            validateUser($username, $password);
         }
     }
-    function getClientAgent()
+
+    function lockFiveMinutes()
     {
-        return $_SERVER['HTTP_USER_AGENT'];
+        $start_date_time = date("Y-m-d H:i:s");
+        $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
+        return $locked_until;
     }
 
-    function getIPAddress()
-    {
-        //whether ip is from the share internet  
-        if(!empty($_SERVER['HTTP_CLIENT_IP'])) 
-        {  
-            $ip = $_SERVER['HTTP_CLIENT_IP'];  
-        }  
-        //whether ip is from the proxy  
-        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) 
-        {  
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];  
-        }  
-        //whether ip is from the remote address  
-        else
-        {  
-            $ip = $_SERVER['REMOTE_ADDR'];  
-        }  
-        return $ip;  
-    }
 
     function validateUser($username, $password)
     {
@@ -89,7 +103,6 @@
                 echo "<script>
                         alert('Username or password incorrect! Please try again'); 
                      </script>";
-
                 blockUser($username, $conn);
             }  
         }
@@ -110,8 +123,7 @@
             $suspiciousUser = mysqli_query($conn, $sql);
             if(mysqli_num_rows($suspiciousUser) > 0)
             {
-                $start_date_time = date("Y-m-d H:i:s");
-                $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
+                $locked_until = lockFiveMinutes();
                 $sql = "UPDATE MyGuests SET locked_until = '$locked_until' WHERE user='$username'";
                 mysqli_query($conn, $sql);
                 echo "<script>
@@ -121,8 +133,22 @@
             }
             else
             {
+                //TODO: work here, does not work!!!
+                $ip = $_SESSION['ip'];
+                $userAgent = $_SESSION['clientAgent'];
+                $locked_until = lockFiveMinutes();
+                $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES ('$ip', '$userAgent', '$locked_until')";
+                if(mysqli_query($conn, $sql))
+                {
+                    echo "<script>alert('Website blocked!')</script>";
+                    header('Refresh:0 url=index.php');
+                } 
+                else 
+                {
+                    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+                }
                 echo "<script>
-                    alert('Username or password incorrect! The page is blocked for 5 minutes'); 
+                    alert('Username or password incorrect!'); 
                     window.location.href='index.php';
                 </script>";
             }
@@ -141,9 +167,11 @@
         $login_user = mysqli_query($conn, $SQL);
         if(mysqli_num_rows($login_user) > 0)
         {
+            $ip = $_SESSION['ip'];
+            $userAgent = $_SESSION['clientAgent'];
             session_unset();
             session_destroy();
-            $sql = "UPDATE MyGuests SET login_date = CURRENT_TIMESTAMP WHERE user='$username' AND passwd='$pass'";
+            $sql = "UPDATE MyGuests SET login_date = CURRENT_TIMESTAMP, ip = '$ip', clientAgent = '$userAgent' WHERE user='$username' AND passwd='$pass'";
             $result = mysqli_query($conn, $sql);
             session_id(generateRandomSessionID());
             session_start(); 

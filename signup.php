@@ -1,8 +1,15 @@
 <?php
     include 'conf.php';
-
-    $username = $_POST['username'];
-    $password = $_POST['pass'];
+    session_start();
+    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']) && isset($_SESSION['ip']) && isset($_SESSION['clientAgent']))
+    {
+        $username = $_POST['username'];
+        $password = $_POST['pass'];
+    }
+    else
+    {
+        header('Location: index.php');
+    }
    
     if (!$conn) 
     {
@@ -25,8 +32,10 @@
         $salt = generateSalt();
         $to_hash = $password . $salt;
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
+        $ip = $_SESSION['ip'];
+        $agent = $_SESSION['clientAgent'];
 
-        $sql = "INSERT INTO MyGuests(user, passwd, salt) VALUES ('$username', '$hash_pass', '$salt')";
+        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES ('$username', '$hash_pass', '$salt', '$ip', '$agent')";
         if(mysqli_query($conn, $sql))
         {
             echo "<script>alert('Account created!')</script>";

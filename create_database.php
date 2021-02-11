@@ -53,7 +53,9 @@
             passwd VARCHAR(120) NOT NULL,
             salt VARCHAR(120) NOT NULL,
             login_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            locked_until TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            locked_until TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            ip VARCHAR(120) NOT NULL,
+            clientAgent VARCHAR(120) NOT NULL
         )";
         mysqli_query($conn, $sql);
         mysqli_close($conn);
