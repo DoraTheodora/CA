@@ -1,21 +1,51 @@
 <?php
-    include 'conf.php';
-    /* Attempt MySQL server connection. Assuming you are running MySQL
-    server with default setting (user 'root' with no password) */
-    // ! Needs to be removed from here
-    $created = false;
-    // Check connection
-    if($conn === false){
-        die("ERROR: Could not connect. " . mysqli_connect_error());
+
+    if(createDatabase())
+    {
+        createMyGuests();
+        createNoGuests();
+        echo "<script>
+                alert('The database was created!'); 
+                    window.location.href='index.php';
+            </script>";
+    }
+    else
+    {
+        echo "<script>
+                alert('The database was not created!'); 
+                    window.location.href='index.php';
+            </script>";
+    }
+
+    function createDatabase()
+    {
+        include 'conf.php';
+        /* Attempt MySQL server connection. Assuming you are running MySQL
+        server with default setting (user 'root' with no password) */
+        $created = false;
+        // Check connection
+        if($link === false)
+        {
+            die("ERROR: Could not connect. " . mysqli_connect_error());
+        }
+    
+        // Attempt create database query execution
+        $sql = "CREATE DATABASE TT";
+        $created = false;
+        if(mysqli_query($link, $sql))
+        {
+            $created = true;
+        } 
+        else
+        {
+            echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+        }
+        return $created;
     }
     
-    // Attempt create database query execution
-    $sql = "CREATE DATABASE TT";
-    $created = false;
-    if(mysqli_query($link, $sql))
-    {
-        echo "Database created successfully";
-        $created = true;
+    function createMyGuests()
+    {  
+        include 'conf.php';
         $sql = "CREATE TABLE MyGuests
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -25,18 +55,23 @@
             login_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             locked_until TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )";
-        if(mysqli_query($conn, $sql))
-        {
-            echo "\n Table created!";
-        }
-
+        mysqli_query($conn, $sql);
         mysqli_close($conn);
-    } 
-    else
-    {
-        echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
     }
-    
+
+    function createNoGuests()
+    {
+        include 'conf.php';
+        $sql = "CREATE TABLE NoGuests
+        (
+            id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            ip VARCHAR(120) NOT NULL,
+            clientAgent VARCHAR(120) NOT NULL,
+            locked_until TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )";
+        mysqli_query($conn, $sql);
+        mysqli_close($conn);
+    }
     
     // Close connection
     mysqli_close($link);

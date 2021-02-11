@@ -34,6 +34,35 @@
                 validateUser($username, $password);
             }
         }
+        else
+        {
+            //TODO: if the used does not exist
+            echo  'User IP Address - '.getIPAddress()." Client agent: ".getClientAgent();  
+        }
+    }
+    function getClientAgent()
+    {
+        return $_SERVER['HTTP_USER_AGENT'];
+    }
+
+    function getIPAddress()
+    {
+        //whether ip is from the share internet  
+        if(!empty($_SERVER['HTTP_CLIENT_IP'])) 
+        {  
+            $ip = $_SERVER['HTTP_CLIENT_IP'];  
+        }  
+        //whether ip is from the proxy  
+        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) 
+        {  
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];  
+        }  
+        //whether ip is from the remote address  
+        else
+        {  
+            $ip = $_SERVER['REMOTE_ADDR'];  
+        }  
+        return $ip;  
     }
 
     function validateUser($username, $password)
@@ -53,25 +82,7 @@
             //echo "HASH + PASSWORD: " . $password ."<br>";
             if(password_verify($to_hash, $pass))
             {
-                $SQL = "SELECT user FROM MyGuests WHERE user='$username' AND passwd='$pass'";
-                $login_user = mysqli_query($conn, $SQL);
-                if(mysqli_num_rows($login_user) > 0)
-                {
-                    session_unset();
-                    session_destroy();
-                    $sql = "UPDATE MyGuests SET login_date = CURRENT_TIMESTAMP WHERE user='$username' AND passwd='$pass'";
-                    $result = mysqli_query($conn, $sql);
-                    session_id(generateRandomSessionID());
-                    session_start(); 
-                    $_SESSION["id_s"] = session_id();
-                    $_SESSION["name"] = $username;        
-                    header('Location: profile.php');
-                    $_SESSION['login_attempts'] = 0;
-                }
-                else
-                {
-                    echo "ERROR: Could not able to execute $sql. " . mysqli_error($login_user);
-                }  
+                logIn($username, $pass, $conn);
             }  
             else
             {
@@ -79,25 +90,7 @@
                         alert('Username or password incorrect! Please try again'); 
                      </script>";
 
-                if($_SESSION['login_attempts']%3 == 0)
-                {
-                    $sql = "SELECT locked_until FROM MyGuests WHERE user='$username'";
-                    $suspiciousUser = mysqli_query($conn, $sql);
-                    if(mysqli_num_rows($suspiciousUser) > 0)
-                    {
-                        $start_date_time = date("Y-m-d H:i:s");
-                        $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
-                        $sql = "UPDATE MyGuests SET locked_until = '$locked_until' WHERE user='$username'";
-                        mysqli_query($conn, $sql);
-                    }
-                    //TODO: What is the user does not exists
-                }
-                else
-                {
-                    echo "<script>
-                            window.location.href='index.php';
-                        </script>";
-                }
+                blockUser($username, $conn);
             }  
         }
         else
@@ -107,6 +100,62 @@
                     window.location.href='index.php';
                 </script>";
         }
+    }
+
+    function blockUser($username, $conn)
+    {
+        if($_SESSION['login_attempts']%3 == 0)
+        {
+            $sql = "SELECT locked_until FROM MyGuests WHERE user='$username'";
+            $suspiciousUser = mysqli_query($conn, $sql);
+            if(mysqli_num_rows($suspiciousUser) > 0)
+            {
+                $start_date_time = date("Y-m-d H:i:s");
+                $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
+                $sql = "UPDATE MyGuests SET locked_until = '$locked_until' WHERE user='$username'";
+                mysqli_query($conn, $sql);
+                echo "<script>
+                    alert('Username or password incorrect! Your account is blocked for 5 minutes'); 
+                    window.location.href='index.php';
+                </script>";
+            }
+            else
+            {
+                echo "<script>
+                    alert('Username or password incorrect! The page is blocked for 5 minutes'); 
+                    window.location.href='index.php';
+                </script>";
+            }
+        }
+        else
+        {
+            echo "<script>
+                    window.location.href='index.php';
+                </script>";
+        }
+    }
+
+    function logIn($username, $pass, $conn)
+    {
+        $SQL = "SELECT user FROM MyGuests WHERE user='$username' AND passwd='$pass'";
+        $login_user = mysqli_query($conn, $SQL);
+        if(mysqli_num_rows($login_user) > 0)
+        {
+            session_unset();
+            session_destroy();
+            $sql = "UPDATE MyGuests SET login_date = CURRENT_TIMESTAMP WHERE user='$username' AND passwd='$pass'";
+            $result = mysqli_query($conn, $sql);
+            session_id(generateRandomSessionID());
+            session_start(); 
+            $_SESSION["id_s"] = session_id();
+            $_SESSION["name"] = $username;        
+            header('Location: profile.php');
+            $_SESSION['login_attempts'] = 0;
+        }
+        else
+        {
+            echo "ERROR: Could not able to execute $sql. " . mysqli_error($login_user);
+        }  
     }
 
     function generateRandomSessionID()
