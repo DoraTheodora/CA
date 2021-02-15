@@ -73,13 +73,21 @@ p {
 	font-family: Poppins-Regular;
 	font-size: 14px;
 	line-height: 1.7;
-	color: #666666;
+	color: #e21313;
 	margin: 0px;
 }
 
 ul, li {
 	margin: 0px;
 	list-style-type: none;
+}
+
+img {
+  border-radius: 8px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
 }
 
 
@@ -147,6 +155,24 @@ iframe {
   font-size: 14px;
   line-height: 1.5;
   color: #333333;
+  text-transform: uppercase;
+}
+
+.welcome {
+  font-family: Poppins-Regular;
+  font-size: 20px;
+  font-weight: bolder;
+  line-height: 1.5;
+  color: #dd0f0f;
+  text-transform: uppercase;
+}
+
+.turtle {
+  font-family: Poppins-Regular;
+  font-size: 20px;
+  font-weight: bolder;
+  line-height: 1.5;
+  color: #0f61dd;
   text-transform: uppercase;
 }
 

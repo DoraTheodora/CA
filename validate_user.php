@@ -54,7 +54,9 @@
             {
                 if($_SESSION['login_attempts'] >= 3)
                 {
-                    if ($_POST["vercode"] != $_SESSION["vercode"] OR $_SESSION["vercode"]=='')  {
+                    if ($_POST["vercode"] != $_SESSION["vercode"] OR $_SESSION["vercode"]=='')  
+                    {
+                        $_SESSION['login_attempts']++;
                         echo "<script>
                             alert('Incorrect verification code');
                             window.location.href='index.php';

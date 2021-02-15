@@ -40,17 +40,17 @@
             <div class="container-login100">
                 <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
                     <form class="login100-form validate-form">
-                        <span class="login100-form-title p-b-49">
-                            Welcome
+                        <span class="turtle p-b-49">
+                            Here is a pretty turtle for you
                             <?php
                                 echo $_SESSION['name'];
                             ?>! 
 							<br>
-							<span class="welcome p-b-5">This is your personal page</span>
+							<img src="turtle.jpg" alt="Paris" width="auto" height="auto">
 							<div class="flex-col-c p-t-30">
 								<span class="txt1 p-b-2">
-									<a href="turtle.php" class="txt2">
-										Pretty Turtle
+									<a href="profile.php" class="txt2">
+										Profile
 									</a>
 								</span>
 								<span class="txt1 p-b-2">
