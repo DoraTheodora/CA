@@ -10,39 +10,7 @@
     {
         header('Location: index.php');
     }
-
-// * Functions ---------------------------------------------------------------------------------------------------------
-    function check_if_non_user_is_blocked()
-    {
-        include 'conf.php';
-
-        $ip = $_SESSION['ip'];
-        $userAgent = $_SESSION['clientAgent'];
-        $sql = "SELECT locked_until FROM NoGuests WHERE ip='$ip' AND clientAgent='$userAgent'";
-        $suspiciousUser = mysqli_query($conn, $sql);
-        $start_date_time = date("Y-m-d H:i:s"); 
-        echo mysqli_num_rows($suspiciousUser); 
-        if(mysqli_num_rows($suspiciousUser) > 0)
-        {
-            $details = mysqli_fetch_assoc($suspiciousUser);
-            if($details['locked_until'] >  $start_date_time)
-            {
-                echo "<script>
-                alert('Sorry you are still locked out !'); 
-                    window.location.href='index.php';
-                </script>";
-            }
-            else
-            {
-                echo "Here";
-            }
-        }
-        else
-        {
-            echo "Nothing from the database";
-        }
-    }
-
+    // * Functions ---------------------------------------------------------------------------------------------------------
     function check_if_user_is_locked($username, $password)
     {
         include 'conf.php';
@@ -54,6 +22,7 @@
             $details = mysqli_fetch_assoc($suspiciousUser);
             if($details['locked_until'] >  $start_date_time)
             {
+                $time_left = $details['locked_until'] - $start_date_time;
                 echo "<script>
                 alert('Sorry you are still locked out !'); 
                     window.location.href='index.php';
@@ -64,20 +33,7 @@
                 validateUser($username, $password);
             }
         }
-        else
-        {
-            //TODO: This is not working!
-            validateUser($username, $password);
-        }
     }
-
-    function lockFiveMinutes()
-    {
-        $start_date_time = date("Y-m-d H:i:s");
-        $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
-        return $locked_until;
-    }
-
 
     function validateUser($username, $password)
     {
@@ -96,66 +52,56 @@
             //echo "HASH + PASSWORD: " . $password ."<br>";
             if(password_verify($to_hash, $pass))
             {
-                logIn($username, $pass, $conn);
+                if($_SESSION['login_attempts'] >= 3)
+                {
+                    if ($_POST["vercode"] != $_SESSION["vercode"] OR $_SESSION["vercode"]=='')  {
+                        echo "<script>
+                            alert('Incorrect verification code');
+                            window.location.href='index.php';
+                        </script>" ;
+                    } 
+                    else
+                    {
+                        logIn($username, $pass, $conn);
+                    }
+                }
+                else if($_SESSION['login_attempts'] < 3)
+                {
+                    logIn($username, $pass, $conn);
+                }
             }  
             else
             {
                 echo "<script>
                         alert('Username or password incorrect! Please try again'); 
-                     </script>";
-                blockUser($username, $conn);
+                        window.location.href='index.php';
+                    </script>";
+
+                if($_SESSION['login_attempts']%5 == 0)
+                {
+                    $sql = "SELECT locked_until FROM MyGuests WHERE user='$username'";
+                    $suspiciousUser = mysqli_query($conn, $sql);
+                    if(mysqli_num_rows($suspiciousUser) > 0)
+                    {
+                        $start_date_time = date("Y-m-d H:i:s");
+                        $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
+                        $sql = "UPDATE MyGuests SET locked_until = '$locked_until' WHERE user='$username'";
+                        mysqli_query($conn, $sql);
+                    }
+                    //TODO: What is the user does not exists
+                }
+                else
+                {
+                    echo "<script>
+                            window.location.href='index.php';
+                        </script>";
+                }
             }  
         }
         else
         {
             echo "<script>
                     alert('Username or password incorrect! Please try again'); 
-                    window.location.href='index.php';
-                </script>";
-        }
-    }
-
-    function blockUser($username, $conn)
-    {
-        if($_SESSION['login_attempts']%3 == 0)
-        {
-            $sql = "SELECT locked_until FROM MyGuests WHERE user='$username'";
-            $suspiciousUser = mysqli_query($conn, $sql);
-            if(mysqli_num_rows($suspiciousUser) > 0)
-            {
-                $locked_until = lockFiveMinutes();
-                $sql = "UPDATE MyGuests SET locked_until = '$locked_until' WHERE user='$username'";
-                mysqli_query($conn, $sql);
-                echo "<script>
-                    alert('Username or password incorrect! Your account is blocked for 5 minutes'); 
-                    window.location.href='index.php';
-                </script>";
-            }
-            else
-            {
-                //TODO: work here, does not work!!!
-                $ip = $_SESSION['ip'];
-                $userAgent = $_SESSION['clientAgent'];
-                $locked_until = lockFiveMinutes();
-                $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES ('$ip', '$userAgent', '$locked_until')";
-                if(mysqli_query($conn, $sql))
-                {
-                    echo "<script>alert('Website blocked!')</script>";
-                    header('Refresh:0 url=index.php');
-                } 
-                else 
-                {
-                    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-                }
-                echo "<script>
-                    alert('Username or password incorrect!'); 
-                    window.location.href='index.php';
-                </script>";
-            }
-        }
-        else
-        {
-            echo "<script>
                     window.location.href='index.php';
                 </script>";
         }

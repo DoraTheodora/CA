@@ -91,6 +91,23 @@
 						<input class="input100" type="password" name="pass" placeholder="Type your password">
 						<span class="focus-input100" data-symbol="&#xf190;"></span>
 					</div>
+					<?php
+						if($_SESSION['login_attempts'] >= 3)
+						{
+							echo '
+								<div class="wrap-input100 validate-input" data-validate="Captcha is required">
+									<span class="label-input100">Password</span>
+									<input class="input100" type="text" name="vercode" placeholder="Type the verification code" required="required">
+									<span class="focus-input100" data-symbol="&#xf190;"></span>
+								</div> 
+								<div class="form-group small clearfix">
+									<span class="label-input100">Captcha</span>
+										<label class="checkbox-inline">Verification Code</label>
+										&nbsp;&nbsp;<img src="captcha.php" >
+									<span class="focus-input100" data-symbol="&#xf190;"></span>
+        						</div>';
+						}
+					?>
 					
 					<div class="text-right p-t-8 p-b-31">
 						<a href="#">
