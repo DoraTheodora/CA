@@ -13,6 +13,7 @@
     // * Functions ---------------------------------------------------------------------------------------------------------
     function check_if_user_is_locked($username, $password)
     {
+        // ! user has an account
         include 'conf.php';
         $sql = "SELECT locked_until FROM MyGuests WHERE user='$username'";
         $suspiciousUser = mysqli_query($conn, $sql);
@@ -26,12 +27,17 @@
                 echo "<script>
                 alert('Sorry you are still locked out !'); 
                     window.location.href='index.php';
-                </script>";
+                </script>"; 
             }
             else
             {
                 validateUser($username, $password);
             }
+        }
+        // ! user does not have an account
+        else
+        {
+            echo "here";
         }
     }
 
@@ -56,7 +62,6 @@
                 {
                     if ($_POST["vercode"] != $_SESSION["vercode"] OR $_SESSION["vercode"]=='')  
                     {
-                        $_SESSION['login_attempts']++;
                         echo "<script>
                             alert('Incorrect verification code');
                             window.location.href='index.php';
@@ -90,7 +95,6 @@
                         $sql = "UPDATE MyGuests SET locked_until = '$locked_until' WHERE user='$username'";
                         mysqli_query($conn, $sql);
                     }
-                    //TODO: What is the user does not exists
                 }
                 else
                 {
@@ -107,6 +111,11 @@
                     window.location.href='index.php';
                 </script>";
         }
+    }
+
+    function block()
+    {
+        
     }
 
     function logIn($username, $pass, $conn)
@@ -127,6 +136,7 @@
             $_SESSION["name"] = $username;        
             header('Location: profile.php');
             $_SESSION['login_attempts'] = 0;
+            
         }
         else
         {
