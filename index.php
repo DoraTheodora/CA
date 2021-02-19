@@ -12,6 +12,18 @@
 	{
 		$_SESSION['clientAgent'] = getClientAgent();
 	}
+	if(!isset($_SESSION['blocked']))
+	{
+		$_SESSION['blocked'] = false;
+	}
+	if(!isset($_SESSION['incorrect_credentials']))
+	{
+		$_SESSION['incorrect_credentials'] = false;
+	}
+	if(!isset($_SESSION['invalid_captcha']))
+	{
+		$_SESSION['invalid_captcha'] = false;
+	}
 
 
 	function getClientAgent()
@@ -79,7 +91,32 @@
 					<span class="login100-form-title p-b-49">
 						Login
 					</span>
-
+					<?php
+					if($_SESSION['incorrect_credentials'])
+					{
+						echo "
+						<span class='error p-b-49'>
+							<span class='welcome p-b-5'>Username or password incorrect! Please try again </span>
+						</span>";
+						$_SESSION['incorrect_credentials'] = false;
+					}
+					if($_SESSION['blocked'])
+					{
+						echo "
+						<span class='error p-b-49'>
+							<span class='welcome p-b-5'>Sorry you are still locked out!</span>
+						</span>";
+						$_SESSION['blocked'] = false;
+					} 
+					if($_SESSION['invalid_captcha'])
+					{
+						echo "
+						<span class='error p-b-49'>
+							<span class='welcome p-b-5'>Invalid captcha code! Please try again</span>
+						</span>";
+						$_SESSION['invalid_captcha'] = false;
+					}
+					?>
 					<div class="wrap-input100 validate-input m-b-23" data-validate = "Username is required">
 						<span class="label-input100">Username</span>
 						<input class="input100" type="text" name="username" placeholder="Type your username">
@@ -95,11 +132,12 @@
 						if($_SESSION['login_attempts'] >= 3)
 						{
 							echo '
+								<br>
 								<div class="wrap-input100 validate-input" data-validate="Captcha is required">
-									<span class="label-input100">Password</span>
+									<span class="label-input100">Captcha Code</span>
 									<input class="input100" type="text" name="vercode" placeholder="Type the verification code" required="required">
 									<span class="focus-input100" data-symbol="&#xf190;"></span>
-								</div> 
+								</div> <br>
 								<div class="form-group small clearfix">
 									<span class="label-input100">Captcha</span>
 										<label class="checkbox-inline">Verification Code</label>

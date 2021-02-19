@@ -1,6 +1,6 @@
 <?php
     session_start();
-    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']) && isset($_SESSION['ip']) && isset($_SESSION['clientAgent']))
+    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']) && isset($_SESSION['ip']) && isset($_SESSION['clientAgent']) && isset($_SESSION['blocked']) && isset($_SESSION['incorrect_credentials']) && isset($_SESSION['invalid_captcha']))
     {
         $username = $_POST['username'];
         $password = $_POST['pass'];
@@ -24,10 +24,8 @@
             if($details['locked_until'] >  $start_date_time)
             {
                 $time_left = $details['locked_until'] - $start_date_time;
-                echo "<script>
-                alert('Sorry you are still locked out !'); 
-                    window.location.href='index.php';
-                </script>"; 
+                $_SESSION['blocked'] = true;
+                header('Refresh:0 url=index.php');
             }
             else
             {
@@ -37,7 +35,27 @@
         // ! user does not have an account
         else
         {
-            echo "here";
+            $ip = $_SESSION['ip'];
+            $agent = $_SESSION['clientAgent'];
+            $sql = "SELECT * FROM NoGuests WHERE ip='ip' AND clientAgent='$agent'";
+            $suspiciousUser = mysqli_query($conn, $sql);
+            $start_date_time = date("Y-m-d H:i:s");
+            if(mysqli_num_rows($suspiciousUser) > 0)
+            {
+                $details = mysqli_fetch_assoc($suspiciousUser);
+                if($details['locked_until'] >  $start_date_time)
+                {
+                    $time_left = $details['locked_until'] - $start_date_time;
+                    $_SESSION['blocked'] = true;
+                    header('Refresh:0 url=index.php');
+                }
+            }
+            else
+            {
+                $_SESSION['login_attempts']++;
+                $_SESSION['incorrect_credentials'] = true;
+                header('Refresh:0 url=index.php');
+            }
         }
     }
 
@@ -62,10 +80,8 @@
                 {
                     if ($_POST["vercode"] != $_SESSION["vercode"] OR $_SESSION["vercode"]=='')  
                     {
-                        echo "<script>
-                            alert('Incorrect verification code');
-                            window.location.href='index.php';
-                        </script>" ;
+                        $_SESSION['invalid_captcha'] = true;
+                        header('Refresh:0 url=index.php');
                     } 
                     else
                     {
@@ -79,21 +95,50 @@
             }  
             else
             {
-                echo "<script>
-                        alert('Username or password incorrect! Please try again'); 
-                        window.location.href='index.php';
-                    </script>";
+                $_SESSION['incorrect_credentials'] = true;
+                header('Refresh:0 url=index.php');
 
                 if($_SESSION['login_attempts']%5 == 0)
                 {
                     $sql = "SELECT locked_until FROM MyGuests WHERE user='$username'";
                     $suspiciousUser = mysqli_query($conn, $sql);
+                    //! if the user that attempts to log in has an account
                     if(mysqli_num_rows($suspiciousUser) > 0)
                     {
                         $start_date_time = date("Y-m-d H:i:s");
                         $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
                         $sql = "UPDATE MyGuests SET locked_until = '$locked_until' WHERE user='$username'";
                         mysqli_query($conn, $sql);
+                    }
+                    //! is the user that attempts to log in does not have an account
+                    else if(mysqli_num_rows($suspiciousUser) == 0)
+                    {
+                        
+                        $ip = $_SESSION['ip'];
+                        $agent = $_SESSION['clientAgent'];
+                        $sql = "SELECT * FROM NoGuests WHERE ip='ip' AND clientAgent='$agent'";
+                        $suspiciousAgent = mysqli_query($conn, $sql);
+                        if(mysqli_num_rows($suspiciousAgent) > 0)
+                        {
+
+                        }
+                        else
+                        {
+                            echo "locking";
+                            
+                            $start_date_time = date("Y-m-d H:i:s");
+                            $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
+                            $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES ('$ip', '$agent', $locked_until)";
+                            if(mysqli_query($conn, $sql))
+                            {
+                                $_SESSION['blocked'] = true;
+                                header('Refresh:0 url=index.php');
+                            } 
+                            else 
+                            {
+                                echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+                            } 
+                        } 
                     }
                 }
                 else
@@ -106,10 +151,8 @@
         }
         else
         {
-            echo "<script>
-                    alert('Username or password incorrect! Please try again'); 
-                    window.location.href='index.php';
-                </script>";
+            $_SESSION['incorrect_credentials'] = true;
+            header('Refresh:0 url=index.php');
         }
     }
 
