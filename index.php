@@ -24,29 +24,10 @@
 	{
 		$_SESSION['invalid_captcha'] = false;
 	}
-	if(!isset($_SESSION['deactivate']))
+	if(!isset($_SESSION['lockedTime']))
 	{
-		$_SESSION['deactivate'] = false;
+		$_SESSION['lockedTime'] = time();
 	}
-
-	//TODO: DISABLE THE BUTTON!!!
-	if(is_user_locked())
-    {
-        echo "
-        <script>
-            document.getElementById('button').disabled = true;
-        </script>
-        ";
-    }
-    else 
-    {
-        echo "
-        <script>
-            document.getElementById('button').disabled = false;
-        </script>
-        ";
-    }
-	//
 
 	function getClientAgent()
     {
@@ -122,14 +103,6 @@
 						</span>";
 						$_SESSION['incorrect_credentials'] = false;
 					}
-					if($_SESSION['blocked'])
-					{
-						echo "
-						<span class='error p-b-49'>
-							<span class='welcome p-b-5'>Sorry you are  locked out!</span>
-						</span>";
-						$_SESSION['blocked'] = false;
-					} 
 					if($_SESSION['invalid_captcha'])
 					{
 						echo "
@@ -138,10 +111,16 @@
 						</span>";
 						$_SESSION['invalid_captcha'] = false;
 					}
+					//? send user to the blocked page if the page is locked
+					if($_SESSION['lockedTime'] > time())
+					{
+						header("Location: blocked.php");
+					}
 					?>
+					<br>
 					<div class="wrap-input100 validate-input m-b-23" data-validate = "Username is required">
 						<span class="label-input100">Username</span>
-						<input class="input100" type="text" name="username" placeholder="Type your username">
+						<input class="input100" type="text" name="username" placeholder="Type your username" autofocus>
 						<span class="focus-input100" data-symbol="&#xf206;"></span>
 					</div>
 
@@ -170,15 +149,13 @@
 					?>
 					
 					<div class="text-right p-t-8 p-b-31">
-						<a href="#">
-							Forgot password?
-						</a>
+
 					</div>
 					
 					<div class="container-login100-form-btn">
 						<div class="wrap-login100-form-btn">
 							<div class="login100-form-bgbtn"></div>
-							<button class="login100-form-btn" type="submit" id="button">
+							<button class="login100-form-btn" type="submit" id="login_button">
 								Login
 							</button>
 						</div>
@@ -186,7 +163,7 @@
 
 					<div class="flex-col-c p-t-30">
 						<span class="txt1 p-b-2">
-                            <a href="signup.html" class="txt2">
+                            <a href="signup.html" class="txt2" id="signup_button">
                                 Sign Up
                             </a>
 						</span>
@@ -220,7 +197,6 @@
 	<script src="vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
 	<script src="js/main.js"></script>
-
 </body>
 </html>
 

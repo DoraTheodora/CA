@@ -1,7 +1,10 @@
 <?php
     session_start();
-    
-    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']) && isset($_SESSION['ip']) && isset($_SESSION['clientAgent']) && isset($_SESSION['blocked']) && isset($_SESSION['incorrect_credentials']) && isset($_SESSION['invalid_captcha']))
+    if($_SESSION['lockedTime'] > time())
+	{
+		header("Location: blocked.php");
+	}
+    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']) && isset($_SESSION['ip']) && isset($_SESSION['clientAgent']) && isset($_SESSION['blocked']) && isset($_SESSION['incorrect_credentials']) && isset($_SESSION['invalid_captcha']) && isset($_SESSION['lockedTime']))
     {
         $username = $_POST['username'];
         $password = $_POST['pass'];
@@ -43,17 +46,11 @@
                     $locked_until = date('Y-m-d H:i:s',strtotime('+3 minutes',strtotime($start_date_time)));
                     
                     $sql = "UPDATE NoGuests SET locked_until = '$locked_until' WHERE ip='$ip' AND clientAgent='$agent'";
-                    if(mysqli_query($conn, $sql))
-                    {
-                        $_SESSION['blocked'] = true;
-                        header('Refresh:0');
-
-                    }
-                    else 
+                    if(!mysqli_query($conn, $sql))
                     {
                         echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-                    } 
-                    
+
+                    }    
                 }
                 else 
                 {
@@ -62,16 +59,14 @@
                     $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES ('$ip', '$agent', '$locked_until')";
                     if(mysqli_query($conn, $sql))
                     {
-                        $_SESSION['blocked'] = true;
-                        header('Refresh:0');
-                    } 
-                    else 
-                    {
                         echo "Error: " . $sql . "<br>" . mysqli_error($conn);
                     } 
-                } 
+                }
+                if(is_user_locked()) 
+                {
+                    header("Location: blocked.php");
+                }
             }
-            $_SESSION['login_attempts'] = 1;
         }
     }
     else
@@ -81,6 +76,7 @@
     // * Functions ---------------------------------------------------------------------------------------------------------
     function is_user_locked()
     {
+        //? This method checks is the device the users uses to log in is locked or not
         include 'conf.php';
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];
@@ -89,33 +85,31 @@
         $time_blocked = mysqli_fetch_array($suspiciousUser);
         $locked_until = strtotime($time_blocked[0]);
         $blocked_time = $locked_until-time();
-        echo $sql;
+        /*echo $sql;
         echo "<br>Blocked until:".$locked_until;
         echo "<br>Current time: ".time();
-        echo "<br>Blocked time: ".$blocked_time;
+        echo "<br>Blocked time: ".$blocked_time;*/
+        $_SESSION['lockedTime'] = $locked_until;
         if($suspiciousUser->num_rows > 0)
         {
             if($blocked_time > 0)
             {
-                $_SESSION['deactivate'] = true;
                 return true;
             }
             else
             {
-                $_SESSION['deactivate'] = false;
                 return false;
             }
         }
         else
         {
-            $_SESSION['deactivate'] = false;
-            
             return false;
         }
     }
 
     function validateUser($username, $password)
     {
+        //? This method checks the user's credentials
         include 'conf.php';
         if(!is_user_locked())
         {
@@ -146,10 +140,9 @@
         else
         {
             $_SESSION['blocked'] = true;
-            header('Refresh:0');
+            header("Location: blocked.php");
         }
     }
-
 
     function logIn($username, $pass, $conn)
     {
