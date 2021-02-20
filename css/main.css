@@ -160,7 +160,7 @@ iframe {
 
 .welcome {
   font-family: Poppins-Regular;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: bolder;
   line-height: 1.5;
   color: #dd0f0f;
@@ -233,10 +233,12 @@ iframe {
 .error {
   display: block;
   font-family: Poppins-Bold;
-  font-size: 39px;
+  font-size: 25px;
   color: #f00d0d;
   text-align: center;
   line-height: 0px;
+  border: 1px solid #f00d0d ;
+  border-radius: 10px;
 }
 
 .author {

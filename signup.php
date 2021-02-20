@@ -38,6 +38,7 @@
         $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES ('$username', '$hash_pass', '$salt', '$ip', '$agent')";
         if(mysqli_query($conn, $sql))
         {
+            //
             echo "<script>alert('Account created!')</script>";
             header('Refresh:0 url=index.php');
         } 

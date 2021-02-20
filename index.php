@@ -24,7 +24,29 @@
 	{
 		$_SESSION['invalid_captcha'] = false;
 	}
+	if(!isset($_SESSION['deactivate']))
+	{
+		$_SESSION['deactivate'] = false;
+	}
 
+	//TODO: DISABLE THE BUTTON!!!
+	if(is_user_locked())
+    {
+        echo "
+        <script>
+            document.getElementById('button').disabled = true;
+        </script>
+        ";
+    }
+    else 
+    {
+        echo "
+        <script>
+            document.getElementById('button').disabled = false;
+        </script>
+        ";
+    }
+	//
 
 	function getClientAgent()
     {
@@ -87,7 +109,7 @@
         <span class="author p-b-1" > 2021</span>
 		<div class="container-login100" style="background-image: url('images/bg-01.jpg');">
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
-				<form class="login100-form validate-form" action="validate_user.php" method="POST">
+				<form class="login100-form validate-form" method='POST' action='validate_user.php'>
 					<span class="login100-form-title p-b-49">
 						Login
 					</span>
@@ -104,7 +126,7 @@
 					{
 						echo "
 						<span class='error p-b-49'>
-							<span class='welcome p-b-5'>Sorry you are still locked out!</span>
+							<span class='welcome p-b-5'>Sorry you are  locked out!</span>
 						</span>";
 						$_SESSION['blocked'] = false;
 					} 
@@ -156,7 +178,7 @@
 					<div class="container-login100-form-btn">
 						<div class="wrap-login100-form-btn">
 							<div class="login100-form-bgbtn"></div>
-							<button class="login100-form-btn" type="submit">
+							<button class="login100-form-btn" type="submit" id="button">
 								Login
 							</button>
 						</div>
@@ -201,3 +223,4 @@
 
 </body>
 </html>
+

@@ -49,13 +49,13 @@
         $sql = "CREATE TABLE MyGuests
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            user VARCHAR(120) NOT NULL,
-            passwd VARCHAR(120) NOT NULL,
-            salt VARCHAR(120) NOT NULL,
-            login_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            locked_until TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            ip VARCHAR(120) NOT NULL,
-            clientAgent VARCHAR(120) NOT NULL
+            user VARCHAR(250) NOT NULL,
+            passwd VARCHAR(250) NOT NULL,
+            salt VARCHAR(250) NOT NULL,
+            login_date DATETIME(6),
+            locked_until DATETIME(6),
+            ip VARCHAR(250) NOT NULL,
+            clientAgent VARCHAR(250) NOT NULL
         )";
         mysqli_query($conn, $sql);
         mysqli_close($conn);
@@ -67,9 +67,9 @@
         $sql = "CREATE TABLE NoGuests
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            ip VARCHAR(120) NOT NULL,
-            clientAgent VARCHAR(120) NOT NULL,
-            locked_until TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            ip VARCHAR(250) NOT NULL,
+            clientAgent VARCHAR(500) NOT NULL,
+            locked_until DATETIME(6)
         )";
         mysqli_query($conn, $sql);
         mysqli_close($conn);
