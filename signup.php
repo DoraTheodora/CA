@@ -1,30 +1,53 @@
 <?php
     include 'conf.php';
     session_start();
-    if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']) && isset($_SESSION['ip']) && isset($_SESSION['clientAgent']))
+    if(isset($_POST['sign_up_username']) && isset($_POST['pass1']) && isset($_POST['pass2']))
     {
-        $username = $_POST['username'];
-        $password = $_POST['pass'];
+        $username = $_POST['sign_up_username'];
+        $password1 = $_POST['pass1'];
+        $password2 = $_POST['pass2'];
+
+        if (!$conn) 
+        {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $create_user = true;
+        if(userExistsInTheDatabase($username, $conn))
+        {
+            $create_user = false;
+            $_SESSION['username_exists'] = true;
+            header("Refresh:0");
+        }
+
+        if(!passwords_matching($password1, $password2))
+        {
+            $create_user = false;
+            $_SESSION['passwords_not_matching'] = true;
+            header("Refresh:0");
+        }
+        if(!password_length($password1))
+        {
+            $create_user = false;
+            $_SESSION['password_too_short'] = true;
+            header("Refresh:0");
+        }
+        if(!password_has_all_required_characters($password1))
+        {
+            $create_user = false;
+            $_SESSION['password_needs_other_type_of_characters'] = true;
+            header("Refresh:0");
+        }
+        if($create_user)
+        {
+            createAccount($username, $password1, $conn);
+        }
     }
     else
     {
-        header('Location: index.php');
+        header("Location: signup.html.php");
     }
    
-    if (!$conn) 
-    {
-        die("Connection failed: " . mysqli_connect_error());
-    }
 
-    if(userExistsInTheDatabase($username, $conn))
-    {
-        echo "<script>alert('This username is already in use. Please try another one')</script>";
-        header("Refresh:0 url=signup.html");
-    }
-    else
-    {
-        createAccount($username, $password, $conn);
-    }
    
     // * Functions ---------------------------------------------------------------------------------------------------------
     function createAccount($username, $password, $conn)
@@ -40,6 +63,8 @@
         {
             //
             echo "<script>alert('Account created!')</script>";
+            session_unset();
+            session_destroy();
             header('Refresh:0 url=index.php');
         } 
         else 
@@ -76,4 +101,31 @@
             return false;
         }
     }
+
+    function passwords_matching($password, $confirm)
+    {
+        if($password !== $confirm) 
+        {
+            return false;
+        }
+        return true;
+    }
+
+    function password_length($password)
+    {
+        return strlen($password) >= 8;
+    }
+
+    function password_has_all_required_characters($password) 
+    {
+        // minimum: 8 characters && 1 number &&  1 uppercase letter &&  1 lowercase letter && 1 symbol
+
+        $containsLowercase = preg_match('/[a-z]/',$password);
+        $containsUppercase = preg_match('/[A-Z]/',$password);
+        $containsNumbers = preg_match('/\d/',$password);
+        $containsSpecial = preg_match('/[^a-zA-Z\d]/',$password);
+
+        return $containsLowercase && $containsUppercase && $containsNumbers && $containsSpecial;
+    }
 ?>  
+

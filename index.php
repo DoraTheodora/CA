@@ -163,7 +163,7 @@
 
 					<div class="flex-col-c p-t-30">
 						<span class="txt1 p-b-2">
-                            <a href="signup.html" class="txt2" id="signup_button">
+                            <a href="signup.html.php" class="txt2" id="signup_button">
                                 Sign Up
                             </a>
 						</span>
