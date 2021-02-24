@@ -28,7 +28,11 @@
 	{
 		$_SESSION['lockedTime'] = time();
 	}
-
+	if(!isset($_SESSION['is_admin']))
+	{
+		$_SESSION['is_admin'] = false;;
+	}
+	
 	function getClientAgent()
     {
         return $_SERVER['HTTP_USER_AGENT'];

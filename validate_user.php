@@ -1,4 +1,5 @@
 <?php
+    require_once 'security_methods.php';
     session_start();
     if($_SESSION['lockedTime'] > time())
 	{
@@ -15,6 +16,7 @@
         }
         else if($_SESSION['login_attempts'] >= 4 && $_SESSION['login_attempts'] < 5)
         {
+            log_activity("failed auth more than 3 times", $ip, $agent, "allowed until 5 attempts");
             if ($_POST["vercode"] != $_SESSION["vercode"] OR $_SESSION["vercode"]=='')  
             {
                 $_SESSION['invalid_captcha'] = true;
@@ -55,7 +57,12 @@
                     if(!$query->execute())
                     {
                         "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
-                    }    
+                    }
+                    else
+                    {
+                        log_activity("failed auth more than 5 times", $ip, $agent, "blocked");
+                    }  
+                    $query->close();
                 }
                 else 
                 {
@@ -68,6 +75,11 @@
                     {
                         "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
                     } 
+                    else
+                    {
+                        log_activity("failed auth more than 5 times", $ip, $agent, "blocked");
+                    }
+                    $query->close();
                 }
                 if(is_user_locked()) 
                 {
@@ -124,20 +136,26 @@
         include 'conf.php';
         if(!is_user_locked())
         {
-            $sql = "SELECT salt, passwd FROM MyGuests WHERE user='$username'";
-            $result = mysqli_query($conn, $sql);
-            if(mysqli_num_rows($result) > 0)
+            $sql = "SELECT salt, passwd FROM MyGuests WHERE user=?";
+            $query = $conn->prepare($sql);
+            $query->bind_param("s", $username);
+            $query->execute();
+            $result = $query->get_result()->fetch_assoc();
+            $ip = $_SESSION['ip'];
+            $agent = $_SESSION['clientAgent'];
+            if(!empty($result))
             {
-                $details = mysqli_fetch_assoc($result);  
-                $salt = $details['salt'];
-                $pass = $details['passwd'];
+                $salt = $result['salt'];
+                $pass = $result['passwd'];
                 $to_hash = $password . $salt;
                 if(password_verify($to_hash, $pass))
                 {
+                    log_activity("validate user", $ip, $agent, "valid credentials");
                     logIn($username, $pass, $conn);
                 }
                 else
                 {
+                    log_activity("validate user", $ip, $agent, "invalid credentials");
                     $_SESSION['incorrect_credentials'] = true;
                     header('Refresh:0');
                 }
@@ -147,6 +165,7 @@
                 $_SESSION['incorrect_credentials'] = true;
                 header('Refresh:0');
             }
+            $query->close();
         }
         else
         {
@@ -173,14 +192,30 @@
             $sql = "UPDATE MyGuests SET login_date = ?, ip = ?, clientAgent = ? WHERE user=? AND passwd=?";
             $query = $conn->prepare($sql);
             $query->bind_param("sssss",$now, $ip, $userAgent, $username, $pass);
-            $query->execute();
-            //$result = mysqli_query($conn, $sql);
-            session_id(generateRandomSessionID());
-            session_start(); 
-            $_SESSION["id_s"] = session_id();
-            $_SESSION["name"] = $username;        
-            header('Location: profile.php');
-            $_SESSION['login_attempts'] = 0;
+            if($query->execute())
+            {
+                log_activity("authentication", $ip, $userAgent, "approved");
+                //$result = mysqli_query($conn, $sql);
+                session_id(generateRandomSessionID());
+                session_start(); 
+                $_SESSION["id_s"] = session_id();
+                $_SESSION["name"] = $username;    
+                if(is_admin($username))
+                {
+                    $_SESSION["is_admin"] = true;
+                }
+                else
+                {
+                    $_SESSION["is_admin"] = false;
+                }
+                header('Location: profile.php');
+                $_SESSION['login_attempts'] = 0;
+            }
+            else
+            {
+                log_activity("authentication", $ip, $userAgent, "server error");
+            }
+            $query->close();
             
         }
         else
@@ -188,8 +223,33 @@
             $_SESSION['incorrect_credentials'] = true;
             header('Refresh:0');
             echo $query->error;
-        } 
-        $query->close(); 
+        }  
+    }
+
+    function is_admin($username)
+    {
+        include 'conf.php';
+        $sql = "SELECT isAdmin FROM MyGuests WHERE user=?";
+        $query = $conn->prepare($sql);
+        $query->bind_param("s",$username);
+        if(!$query->execute()) 
+        {
+            "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
+            return false;
+        }
+        $results = $query->get_result()->fetch_assoc();
+        if(!empty($results))
+        {
+            if($results['isAdmin'] == 1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
     }
 
     function generateRandomSessionID()

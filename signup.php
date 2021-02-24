@@ -1,6 +1,6 @@
 <?php
-    include 'conf.php';
-    include 'security_methods.php';
+    require_once 'conf.php';
+    require_once 'security_methods.php';
     session_start();
     $create_user = true;
     if(isset($_POST['sign_up_username']) && isset($_POST['pass1']) && isset($_POST['pass2']))
@@ -10,12 +10,11 @@
         $password1 = filter($_POST['pass1']);
         if($username != $_POST['sign_up_username'] || $password1 != $_POST['pass1'] ||$password2 != $_POST['pass2'])
         {
+            log_activity("filter username and password", $ip, $agent, "illegal characters found");
             $create_user = false;
             $_SESSION['illegal_characters'] = true;
             header("Refresh:0");
         }
-
-
         if (!$conn) 
         {
             die("Connection failed: " . mysqli_connect_error());
@@ -70,12 +69,14 @@
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];
+        $isAdmin = 0;
 
-        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES (?,?,?,?,?)";
+        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent,isAdmin) VALUES (?,?,?,?,?,?)";
         $query = $conn->prepare($sql);
-        $query->bind_param("sssss",$username, $hash_pass, $salt, $ip, $agent);
+        $query->bind_param("sssssi",$username, $hash_pass, $salt, $ip, $agent, $isAdmin);
         if($query->execute())
         {
+            log_activity("sign up attempted", $ip, $agent, "account created");
             echo "<script>alert('Account created!')</script>";
             session_unset();
             session_destroy();
@@ -83,6 +84,7 @@
         }
         else
         {
+            log_activity("sign up attempted", $ip, $agent, "account not created, error on the server side");
             echo $query->error;
         }
         $query->close();
@@ -108,8 +110,8 @@
         $query->bind_param("s",$username);
         if($query->execute())
         {
-            $users = $query->get_result();
-            if(mysqli_num_rows($users) > 0)
+            $users = $query->get_result()->fetch_assoc();
+            if(!empty($users))
             {
                 return true;
             }

@@ -48,6 +48,17 @@
 							<br>
 							<span class="welcome p-b-5">This is your personal page</span>
 							<div class="flex-col-c p-t-30">
+								<?php
+									if($_SESSION['is_admin']==true)
+									{
+										echo '<span class="txt1 p-b-2">
+												<a href="logs.php" class="txt2">
+													Logs
+												</a>
+											</span>';
+
+									}
+								?>
 								<span class="txt1 p-b-2">
 									<a href="turtle.php" class="txt2">
 										Pretty Turtle

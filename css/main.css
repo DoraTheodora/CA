@@ -77,6 +77,15 @@ p {
 	margin: 0px;
 }
 
+.logs {
+	font-family: Poppins-Regular;
+  padding-left: 37%;
+	font-size: 17px;
+	color: #0e1fa5;
+	margin: 0px;
+  line-height: 0.5;
+}
+
 ul, li {
 	margin: 0px;
 	list-style-type: none;

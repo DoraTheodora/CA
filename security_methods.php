@@ -16,6 +16,21 @@
         #}
         return $sanitizedString;
     }
-
+    
+    function log_activity($action, $ip, $agent, $outcome)
+    {
+        include 'conf.php';
+        $sql = "INSERT INTO Logs(action_performed, ip, clientAgent, date_time, outcome) VALUES (?,?,?,?,?)";
+        if($query = $conn->prepare($sql))
+        {
+            $now = date("Y-m-d H:i:s");
+            $query->bind_param("sssss", $action, $ip, $agent, $now, $outcome);
+            if(!$query->execute())
+            {
+                "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
+            }
+            $query->close();
+        }
+    }
 
 ?>

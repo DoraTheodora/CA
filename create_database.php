@@ -60,7 +60,8 @@
             salt VARCHAR(250) NOT NULL,
             login_date DATETIME(5),
             ip VARCHAR(250) NOT NULL,
-            clientAgent VARCHAR(250) NOT NULL
+            clientAgent VARCHAR(250) NOT NULL,
+            isAdmin INTEGER(5) NOT NULL
         )";
         $query = $conn->prepare($sql);
         $query->execute();
@@ -76,10 +77,11 @@
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];
         $user = "admin";
+        $isAdmin = 1;
 
-        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES (?,?,?,?,?)";
+        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent, isAdmin) VALUES (?,?,?,?,?,?)";
         $query = $conn->prepare($sql);
-        $query->bind_param("sssss", $user, $hash_pass, $salt, $ip, $agent);
+        $query->bind_param("sssssi", $user, $hash_pass, $salt, $ip, $agent, $isAdmin);
         $query->execute();
         $query->close();
     }
