@@ -44,7 +44,7 @@
                                      We are sorry, this device is blocked 
                                  </span>
                                  <span class="login100-form-title p-b-49">
-                                     for about 3 minutes 
+                                     Try again in about 3 minutes
                                  </span>
                                  <div class="flex-col-c p-t-30">
                                  <a href="index.php" class="txt2 p-t-100">

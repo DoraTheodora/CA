@@ -1,11 +1,13 @@
 <?php
     include 'conf.php';
+    include 'security_methods.php';
     session_start();
     if(isset($_POST['sign_up_username']) && isset($_POST['pass1']) && isset($_POST['pass2']))
     {
-        $username = $_POST['sign_up_username'];
-        $password1 = $_POST['pass1'];
-        $password2 = $_POST['pass2'];
+        $username = filter($_POST['sign_up_username']);
+        //TODO: display if any variables is changed due filtration
+        $password1 = filter($_POST['pass1']);
+        $password2 = filter($_POST['pass2']);
 
         if (!$conn) 
         {
@@ -18,23 +20,28 @@
             $_SESSION['username_exists'] = true;
             header("Refresh:0");
         }
-
-        if(!passwords_matching($password1, $password2))
+        else if(!passwords_matching($password1, $password2))
         {
             $create_user = false;
             $_SESSION['passwords_not_matching'] = true;
             header("Refresh:0");
         }
-        if(!password_length($password1))
+        else if(!password_length($password1))
         {
             $create_user = false;
             $_SESSION['password_too_short'] = true;
             header("Refresh:0");
         }
-        if(!password_has_all_required_characters($password1))
+        else if(!password_has_all_required_characters($password1))
         {
             $create_user = false;
             $_SESSION['password_needs_other_type_of_characters'] = true;
+            header("Refresh:0");
+        }
+        else if(username_is_in_password($password1, $username))
+        {
+            $create_user = false;
+            $_SESSION['username_in_password'] = true;
             header("Refresh:0");
         }
         if($create_user)
@@ -127,5 +134,11 @@
 
         return $containsLowercase && $containsUppercase && $containsNumbers && $containsSpecial;
     }
+
+    function username_is_in_password($password, $username)
+    {
+        return strpos($password, $username) !== false;
+    }
+        
 ?>  
 
