@@ -7,8 +7,15 @@
 	}
     if(isset($_POST['username']) && isset($_POST['pass']) && isset($_SESSION['login_attempts']) && isset($_SESSION['ip']) && isset($_SESSION['clientAgent']) && isset($_SESSION['blocked']) && isset($_SESSION['incorrect_credentials']) && isset($_SESSION['invalid_captcha']) && isset($_SESSION['lockedTime']))
     {
-        $username = $_POST['username'];
-        $password = $_POST['pass'];
+        
+        $username = filter($_POST['username']);
+        $password = filter($_POST['pass']);
+        if($username != $_POST['username'] || $password != $_POST['pass'])
+        {
+            $_SESSION['illegal_characters'] = true;
+            header('Refresh:0');
+        }
+
         $_SESSION['login_attempts']++;
         if($_SESSION['login_attempts'] <= 3)
         {
@@ -150,12 +157,10 @@
                 $to_hash = $password . $salt;
                 if(password_verify($to_hash, $pass))
                 {
-                    log_activity("validate user", $ip, $agent, "valid credentials");
                     logIn($username, $pass, $conn);
                 }
                 else
                 {
-                    log_activity("validate user", $ip, $agent, "invalid credentials");
                     $_SESSION['incorrect_credentials'] = true;
                     header('Refresh:0');
                 }

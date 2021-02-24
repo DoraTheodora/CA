@@ -93,7 +93,7 @@
         <span class="author p-b-1" > Theodora Tataru, C00231174</span> <br>
         <span class="author p-b-1" > 2021</span>
 		<div class="container-login100" style="background-image: url('images/bg-01.jpg');">
-			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+			<div class="wrap-login100 p-l-30 p-r-30 p-t-65 p-b-54">
 				<form class="login100-form validate-form" method='POST' action='validate_user.php'>
 					<span class="login100-form-title p-b-49">
 						Login
@@ -102,18 +102,24 @@
 					if($_SESSION['incorrect_credentials'])
 					{
 						echo "
-						<span class='error p-b-49'>
-							<span class='welcome p-b-5'>Username or password incorrect! Please try again </span>
-						</span>";
+							<span class='error p-b-5'> <p> Username or password incorrect! Please try again </p> </span><br>";
 						$_SESSION['incorrect_credentials'] = false;
 					}
 					if($_SESSION['invalid_captcha'])
 					{
 						echo "
-						<span class='error p-b-49'>
-							<span class='welcome p-b-5'>Invalid captcha code! Please try again</span>
-						</span>";
+							<span class='error p-b-5'> <p> Invalid captcha code! Please try again </p> </span> <br>";
 						$_SESSION['invalid_captcha'] = false;
+					}
+					if($_SESSION['illegal_characters'])
+					{
+						echo "
+							<span class='error p-b-5'> <p>Illegal characters were used in your username or password.</p>
+								<p>The following characters are not allowed:</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp; &amp  &lt  &gt  &#40  &#41  &#123  &#125
+								&#91 &#93  &#34  &#39  &#59  &#47  &#92 </p>
+							</span>";
+						$_SESSION['illegal_characters'] = false;
 					}
 					//? send user to the blocked page if the page is locked
 					if($_SESSION['lockedTime'] > time())
