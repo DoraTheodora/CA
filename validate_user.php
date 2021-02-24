@@ -8,7 +8,7 @@
     {
         $username = $_POST['username'];
         $password = $_POST['pass'];
-        //!$_SESSION['login_attempts']++;
+        $_SESSION['login_attempts']++;
         if($_SESSION['login_attempts'] <= 3)
         {
             validateUser($username, $password);
@@ -37,29 +37,36 @@
                 include 'conf.php';
                 $ip = $_SESSION['ip'];
                 $agent = $_SESSION['clientAgent'];
-                $sql = "SELECT * FROM NoGuests WHERE ip='$ip' AND clientAgent='$agent'";
-                $suspiciousAgent = mysqli_query($conn, $sql);
-                $rows = mysqli_num_rows($suspiciousAgent);
-                if($rows > 0)
+                $sql = "SELECT * FROM NoGuests WHERE ip=? AND clientAgent=?";
+                $query = $conn->prepare($sql);
+                $query->bind_param("ss",$ip, $agent);
+                $query->execute();
+                //$suspiciousAgent = mysqli_query($conn, $sql);
+                //$rows = mysqli_num_rows($suspiciousAgent);
+                $results = $query->get_result()->fetch_assoc();
+                if(!empty($results))
                 {
                     $start_date_time = date("Y-m-d H:i:s");
                     $locked_until = date('Y-m-d H:i:s',strtotime('+3 minutes',strtotime($start_date_time)));
                     
-                    $sql = "UPDATE NoGuests SET locked_until = '$locked_until' WHERE ip='$ip' AND clientAgent='$agent'";
-                    if(!mysqli_query($conn, $sql))
+                    $sql = "UPDATE NoGuests SET locked_until = ? WHERE ip=? AND clientAgent=?";
+                    $query = $conn->prepare($sql);
+                    $query->bind_param("sss", $locked_until, $ip, $agent);
+                    if(!$query->execute())
                     {
-                        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
-
+                        "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
                     }    
                 }
                 else 
                 {
                     $start_date_time = date("Y-m-d H:i:s");
                     $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
-                    $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES ('$ip', '$agent', '$locked_until')";
-                    if(mysqli_query($conn, $sql))
+                    $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES (?, ?, ?)";
+                    $query = $conn->prepare($sql);
+                    $query->bind_param("s",$ip, $agent, $locked_until);
+                    if(!$query->execute()) 
                     {
-                        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+                        "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
                     } 
                 }
                 if(is_user_locked()) 
@@ -178,7 +185,8 @@
             $_SESSION['incorrect_credentials'] = true;
             header('Refresh:0');
             echo $query->error;
-        }  
+        } 
+        $query->close(); 
     }
 
     function generateRandomSessionID()
