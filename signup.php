@@ -71,21 +71,20 @@
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];
 
-        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES ('$username', '$hash_pass', '$salt', '$ip', '$agent')";
-        if(mysqli_query($conn, $sql))
+        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES (?,?,?,?,?)";
+        $query = $conn->prepare($sql);
+        $query->bind_param("sssss",$username, $hash_pass, $salt, $ip, $agent);
+        if($query->execute())
         {
-            //
             echo "<script>alert('Account created!')</script>";
             session_unset();
             session_destroy();
             header('Refresh:0 url=index.php');
-        } 
-        else 
-        {
-            echo "Error: " . $sql . "<br>" . mysqli_error($conn);
         }
-    
-        mysqli_close($conn);
+        else
+        {
+            echo $query->error;
+        }
     }
 
     function generateSalt()
@@ -103,15 +102,24 @@
 
     function userExistsInTheDatabase($username, $conn)
     {
-        $SQL = "SELECT * FROM MyGuests WHERE user='$username'";
-        $users = mysqli_query($conn, $SQL);
-        if(mysqli_num_rows($users) > 0)
+        $SQL = "SELECT * FROM MyGuests WHERE user=?";
+        $query = $conn->prepare($SQL);
+        $query->bind_param("s",$username);
+        if($query->execute())
         {
-            return true;
+            $users = $query->get_result();
+            if(mysqli_num_rows($users) > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
-            return false;
+            echo $query->error;
         }
     }
 
