@@ -63,7 +63,7 @@
                     $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
                     $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES (?, ?, ?)";
                     $query = $conn->prepare($sql);
-                    $query->bind_param("s",$ip, $agent, $locked_until);
+                    $query->bind_param("sss",$ip, $agent, $locked_until);
                     if(!$query->execute()) 
                     {
                         "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
@@ -88,17 +88,20 @@
         include 'conf.php';
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];
-        $sql = "SELECT MAX(locked_until) FROM NoGuests WHERE ip='$ip' AND clientAgent='$agent'";
-        $suspiciousUser = mysqli_query($conn, $sql);
-        $time_blocked = mysqli_fetch_array($suspiciousUser);
-        $locked_until = strtotime($time_blocked[0]);
+        $sql = "SELECT MAX(locked_until) FROM NoGuests WHERE ip=? AND clientAgent=?";
+        $query = $conn->prepare($sql);
+        $query->bind_param("ss",$ip, $agent);
+        $query->execute();
+        $suspiciousUser = $query->get_result()->fetch_array();
+        $query->close();
+        $locked_until = strtotime($suspiciousUser[0]);
         $blocked_time = $locked_until-time();
         /*echo $sql;
         echo "<br>Blocked until:".$locked_until;
         echo "<br>Current time: ".time();
         echo "<br>Blocked time: ".$blocked_time;*/
         $_SESSION['lockedTime'] = $locked_until;
-        if($suspiciousUser->num_rows > 0)
+        if(!empty($suspiciousUser))
         {
             if($blocked_time > 0)
             {
