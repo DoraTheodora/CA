@@ -1,13 +1,17 @@
 <?php
-
+    session_start();
     if(createDatabase())
     {
         createMyGuests();
+        create_admin();
         createNoGuests();
+        createLog();
         echo "<script>
                 alert('The database was created!'); 
                     window.location.href='index.php';
             </script>";
+        session_unset();
+        session_destroy();
     }
     else
     {
@@ -19,7 +23,7 @@
 
     function createDatabase()
     {
-        include 'conf.php';
+        include 'conf_admin.php';
         /* Attempt MySQL server connection. Assuming you are running MySQL
         server with default setting (user 'root' with no password) */
         $created = false;
@@ -40,6 +44,7 @@
         {
             echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
         }
+        mysqli_close($link);
         return $created;
     }
     
@@ -61,6 +66,20 @@
         mysqli_close($conn);
     }
 
+    function create_admin()
+    {
+        include 'conf.php';
+        $salt = generateSalt();
+        $to_hash = "Password1!" . $salt;
+        $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
+        $ip = $_SESSION['ip'];
+        $agent = $_SESSION['clientAgent'];
+
+        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES ('ADMIN', '$hash_pass', '$salt', '$ip', '$agent')";
+        if(mysqli_query($conn, $sql))
+        mysqli_close($conn);
+    }
+
     function createNoGuests()
     {
         include 'conf.php';
@@ -74,7 +93,33 @@
         mysqli_query($conn, $sql);
         mysqli_close($conn);
     }
-    
-    // Close connection
-    mysqli_close($link);
+
+    function createLog()
+    {
+        include 'conf.php';
+        $sql = "CREATE TABLE Logs
+        (
+            id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            action_performed VARCHAR(250) NOT NULL,
+            ip VARCHAR(250) NOT NULL,
+            clientAgent VARCHAR(500) NOT NULL,
+            date_time DATETIME(6),
+            outcome VARCHAR(500) NOT NULL
+        )";
+        mysqli_query($conn, $sql);
+        mysqli_close($conn);
+    }
+
+    function generateSalt()
+    {
+        $length = 96;
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $salt = "";
+        for($i = 0 ; $i < $length; $i++)
+        {
+            $index = rand(0, strlen($characters) -1);
+            $salt .= $characters[$index];
+        }
+        return $salt;
+    } 
 ?>
