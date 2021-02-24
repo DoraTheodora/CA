@@ -2,18 +2,24 @@
     include 'conf.php';
     include 'security_methods.php';
     session_start();
+    $create_user = true;
     if(isset($_POST['sign_up_username']) && isset($_POST['pass1']) && isset($_POST['pass2']))
     {
         $username = filter($_POST['sign_up_username']);
-        //TODO: display if any variables is changed due filtration
-        $password1 = filter($_POST['pass1']);
         $password2 = filter($_POST['pass2']);
+        $password1 = filter($_POST['pass1']);
+        if($username != $_POST['sign_up_username'] || $password1 != $_POST['pass1'] ||$password2 != $_POST['pass2'])
+        {
+            $create_user = false;
+            $_SESSION['illegal_characters'] = true;
+            header("Refresh:0");
+        }
+
 
         if (!$conn) 
         {
             die("Connection failed: " . mysqli_connect_error());
         }
-        $create_user = true;
         if(userExistsInTheDatabase($username, $conn))
         {
             $create_user = false;

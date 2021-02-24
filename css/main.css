@@ -250,6 +250,18 @@ iframe {
   text-align: center;
 }
 
+.info {
+  display: block;
+  font-family: Poppins-Regular;
+  font-size: 12px;
+  color: #666666;
+  /*text-align: center;*/
+  line-height: auto;
+  padding: 5px;
+  border: 1px solid #666666 ;
+  border-radius: 10px;
+}
+
 
 
 /*------------------------------------------------------------------

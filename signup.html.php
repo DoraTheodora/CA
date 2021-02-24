@@ -22,6 +22,10 @@
         {
             $_SESSION['username_in_password'] = false;
         }
+        if(!isset($_SESSION['illegal_characters']))
+        {
+            $_SESSION['illegal_characters'] = false;
+        }
 
     ?>
     <!DOCTYPE html>
@@ -60,6 +64,21 @@
             <div class="container-login100">
                 <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
                     <form class="login100-form validate-form" action="signup.php" method="POST">
+                        <div class="info">
+                            To create a new account you should have:
+                            <ul>
+                                <li> &nbsp;&nbsp;&nbsp;&nbsp; A unique username </li>
+                                <li> &nbsp;&nbsp;&nbsp;&nbsp; A password that: </li>
+                                <ol>
+                                    <li> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has minimum 8 characters </li>
+                                    <li> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has minimum 1 number </li>
+                                    <li> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has minimum 1 uppercase letter </li>
+                                    <li> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has minimum 1 lowercase letter </li>
+                                    <li> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; has minimum 1 symbol </li>
+                                </ol>
+                            </ul>
+                        </div>
+                        <br><br>
                         <span class="login100-form-title p-b-49">
                             Sign Up
                         </span>
@@ -67,42 +86,41 @@
                             if($_SESSION['username_exists'])
                             {
                                 echo "
-                                <span class='error p-b-49'>
-                                    <span class='welcome p-b-5'> Username already is use </span>
-                                </span>";
+                                    <span class='error p-b-5'> <p> Username already is use </p></span>";
                                 $_SESSION['username_exists'] = false;
                             }
                             if($_SESSION['passwords_not_matching'])
                             {
                                 echo "
-                                <span class='error p-b-49'>
-                                    <span class='welcome p-b-5'> Passwords do not match! </span>
-                                </span>";
+                                    <span class='error p-b-5'> <p> Passwords do not match! </p> </span>";
                                 $_SESSION['passwords_not_matching'] = false;
                             }
                             if($_SESSION['password_too_short'])
                             {
                                 echo "
-                                <span class='error p-b-49'>
-                                    <span class='welcome p-b-5'> Password is too short!\nYour password should have at least 3 characters </span>
-                                </span>";
+                                    <span class='error p-b-5'> <p> Password is too short!\nThe password should have at least 8 characters </p> </span>";
                                 $_SESSION['password_too_short'] = false;
                             }
                             if($_SESSION['password_needs_other_type_of_characters'])
                             {
                                 echo "
-                                <span class='error p-b-49'>
-                                    <span class='welcome p-b-5'> The password should have: minimum: 8 characters, 1 number, 1 uppercase letter, 1 lowercase letter and 1 symbol </span>
-                                </span>";
+                                    <span class='error p-b-5'> <p> The password should have: minimum:</p> <p> &nbsp;&nbsp;&nbsp;&nbsp; 8 characters, 1 number, 1 uppercase letter, 1 lowercase letter and 1 symbol </p> </span>";
                                 $_SESSION['password_needs_other_type_of_characters'] = false;
                             }
                             if($_SESSION['username_in_password'])
                             {
                                 echo "
-                                <span class='error p-b-49'>
-                                    <span class='welcome p-b-5'> The password cannot contain the username in it\nPlease try again </span>
-                                </span>";
+                                    <span class='error p-b-5'> <p> The password cannot contain the username in it\nPlease try again </p> </span>";
                                 $_SESSION['username_in_password'] = false;
+                            }
+                            if($_SESSION['illegal_characters'])
+                            {
+                                echo "
+                                    <span class='error p-b-5'> <p>Illegal characters were used in your username or password.</p>
+                                    <p>The following characters are not allowed:</p>
+                                    <p>&nbsp;&nbsp;&nbsp;&nbsp; &amp  &lt  &gt  &#40  &#41  &#123  &#125
+                                    &#91 &#93  &#34  &#39  &#59  &#47  &#92 </p>  </span>";
+                                $_SESSION['illegal_characters'] = false;
                             }
                         ?>
                         <br>
@@ -137,8 +155,6 @@
                                 </button>
                             </div>
                         </div>
-
-
                     </form>
                 </div>
             </div>

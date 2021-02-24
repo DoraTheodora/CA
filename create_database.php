@@ -74,9 +74,12 @@
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];
+        $user = "admin";
 
-        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES ('ADMIN', '$hash_pass', '$salt', '$ip', '$agent')";
-        if(mysqli_query($conn, $sql))
+        $sql = "INSERT INTO MyGuests(user, passwd, salt, ip, clientAgent) VALUES (?,?,?,?,?)";
+        $query = $conn->prepare($sql);
+        $query->bind_param("sssss", $user, $hash_pass, $salt, $ip, $agent);
+        $query->execute();
         mysqli_close($conn);
     }
 
