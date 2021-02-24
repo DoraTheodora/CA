@@ -23,7 +23,6 @@
         }
         else if($_SESSION['login_attempts'] >= 4 && $_SESSION['login_attempts'] < 5)
         {
-            log_activity("failed auth more than 3 times", $ip, $agent, "allowed until 5 attempts");
             if ($_POST["vercode"] != $_SESSION["vercode"] OR $_SESSION["vercode"]=='')  
             {
                 $_SESSION['invalid_captcha'] = true;
@@ -161,12 +160,14 @@
                 }
                 else
                 {
+                    log_activity("authentication", $ip, $agent, "invalid credentials");
                     $_SESSION['incorrect_credentials'] = true;
                     header('Refresh:0');
                 }
             }
             else
             {
+                log_activity("authentication", $ip, $agent, "invalid credentials");
                 $_SESSION['incorrect_credentials'] = true;
                 header('Refresh:0');
             }

@@ -2,6 +2,7 @@
     session_start();
     if(createDatabase())
     {
+        include 'conf.php';
         createMyGuests();
         create_admin();
         createNoGuests();
@@ -61,7 +62,7 @@
             login_date DATETIME(6),
             ip VARCHAR(250) NOT NULL,
             clientAgent VARCHAR(250) NOT NULL,
-            isAdmin INTEGER() NOT NULL
+            isAdmin INTEGER(5) NOT NULL
         )";
         $query = $conn->prepare($sql);
         $query->execute();

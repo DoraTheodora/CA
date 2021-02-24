@@ -45,7 +45,7 @@
                         {
                             get_log();
                             echo '
-                            <span class="login100-form-title p-b-49">
+                            <span class="login100-form-title p-b-20">
                                 <span class="txt1 p-b-2">
                                     <a href="profile.php" class="txt2">
                                         Profile
@@ -98,9 +98,7 @@ function get_log()
     {
         echo '
         <span class="login100-form-title p-b-20">
-                Activity logs
-        </span>
-        ';
+                Activity logs <br><br>';
         while($row = $query->fetch_assoc())
         {
             $id = $row["id"];
@@ -109,8 +107,9 @@ function get_log()
             $date_time = $row["date_time"];
             $outcome = $row["outcome"];
 
-            echo '<div class="logs">'.$id." ".$action_performed." ".$ip." ".$date_time." ".$outcome.'</div><br/>';
+            echo '<div class="logs"><b>'.$id."</b>  ".$action_performed."  ".$ip."  ".$date_time."  <b>".$outcome.'</b></div><br/>';
         }
+        echo '</span>';
     }
     $query->free();
 }

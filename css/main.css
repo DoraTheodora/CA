@@ -79,11 +79,10 @@ p {
 
 .logs {
 	font-family: Poppins-Regular;
-  padding-left: 37%;
 	font-size: 17px;
 	color: #0e1fa5;
 	margin: 0px;
-  line-height: 0.5;
+  line-height: 0px;
 }
 
 ul, li {

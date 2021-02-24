@@ -30,7 +30,11 @@
 	}
 	if(!isset($_SESSION['is_admin']))
 	{
-		$_SESSION['is_admin'] = false;;
+		$_SESSION['is_admin'] = false;
+	}
+	if(!isset($_SESSION['illegal_characters']))
+	{
+		$_SESSION['illegal_characters'] = false;
 	}
 	
 	function getClientAgent()
