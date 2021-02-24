@@ -85,6 +85,7 @@
         {
             echo $query->error;
         }
+        $query->close();
     }
 
     function generateSalt()
@@ -121,6 +122,7 @@
         {
             echo $query->error;
         }
+        $query->close();
     }
 
     function passwords_matching($password, $confirm)

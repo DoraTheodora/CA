@@ -36,7 +36,8 @@
         // Attempt create database query execution
         $sql = "CREATE DATABASE TT";
         $created = false;
-        if(mysqli_query($link, $sql))
+        $query = $link->prepare($sql);
+        if($query->execute())
         {
             $created = true;
         } 
@@ -44,7 +45,7 @@
         {
             echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
         }
-        mysqli_close($link);
+        $query->close();
         return $created;
     }
     
@@ -62,8 +63,9 @@
             ip VARCHAR(250) NOT NULL,
             clientAgent VARCHAR(250) NOT NULL
         )";
-        mysqli_query($conn, $sql);
-        mysqli_close($conn);
+        $query = $conn->prepare($sql);
+        $query->execute();
+        $query->close();
     }
 
     function create_admin()
@@ -80,7 +82,7 @@
         $query = $conn->prepare($sql);
         $query->bind_param("sssss", $user, $hash_pass, $salt, $ip, $agent);
         $query->execute();
-        mysqli_close($conn);
+        $query->close();
     }
 
     function createNoGuests()
@@ -93,8 +95,9 @@
             clientAgent VARCHAR(500) NOT NULL,
             locked_until DATETIME(6)
         )";
-        mysqli_query($conn, $sql);
-        mysqli_close($conn);
+        $query = $conn->prepare($sql);
+        $query->execute();
+        $query->close();
     }
 
     function createLog()
@@ -109,8 +112,9 @@
             date_time DATETIME(6),
             outcome VARCHAR(500) NOT NULL
         )";
-        mysqli_query($conn, $sql);
-        mysqli_close($conn);
+        $query = $conn->prepare($sql);
+        $query->execute();
+        $query->close();
     }
 
     function generateSalt()

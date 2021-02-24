@@ -8,7 +8,7 @@
     {
         $username = $_POST['username'];
         $password = $_POST['pass'];
-        $_SESSION['login_attempts']++;
+        //!$_SESSION['login_attempts']++;
         if($_SESSION['login_attempts'] <= 3)
         {
             validateUser($username, $password);
@@ -49,6 +49,7 @@
                     if(!mysqli_query($conn, $sql))
                     {
                         echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+
                     }    
                 }
                 else 
@@ -66,6 +67,7 @@
                     header("Location: blocked.php");
                 }
             }
+            $_SESSION['login_attempts'] = 0;
         }
     }
     else
@@ -145,17 +147,24 @@
 
     function logIn($username, $pass, $conn)
     {
-        $SQL = "SELECT user FROM MyGuests WHERE user='$username' AND passwd='$pass'";
-        $login_user = mysqli_query($conn, $SQL);
-        if(mysqli_num_rows($login_user) > 0)
+        $SQL = "SELECT user FROM MyGuests WHERE user=? AND passwd=?";
+        $query = $conn->prepare($SQL);
+        $query->bind_param("ss",$username, $pass);
+        $users = $query->execute();
+        //$login_user = mysqli_query($conn, $SQL);
+        $results = $query->get_result()->fetch_assoc();
+        if(!empty($results))
         {
             $ip = $_SESSION['ip'];
             $userAgent = $_SESSION['clientAgent'];
             session_unset();
             session_destroy();
             $now = date("Y-m-d H:i:s");
-            $sql = "UPDATE MyGuests SET login_date = '$now', ip = '$ip', clientAgent = '$userAgent' WHERE user='$username' AND passwd='$pass'";
-            $result = mysqli_query($conn, $sql);
+            $sql = "UPDATE MyGuests SET login_date = ?, ip = ?, clientAgent = ? WHERE user=? AND passwd=?";
+            $query = $conn->prepare($sql);
+            $query->bind_param("sssss",$now, $ip, $userAgent, $username, $pass);
+            $query->execute();
+            //$result = mysqli_query($conn, $sql);
             session_id(generateRandomSessionID());
             session_start(); 
             $_SESSION["id_s"] = session_id();
@@ -168,7 +177,7 @@
         {
             $_SESSION['incorrect_credentials'] = true;
             header('Refresh:0');
-            echo "ERROR: Could not able to execute $sql. " . mysqli_error($login_user);
+            echo $query->error;
         }  
     }
 
