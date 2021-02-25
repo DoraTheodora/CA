@@ -112,18 +112,34 @@ function get_log()
     {
         echo '
         <span class="login100-form-title p-b-20">
-                Activity logs <br><br>';
+                Activity logs <br><br>
+            </span>';
+        echo "<table class='styled-table'>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ACTION PERFORMED</th>
+                        <th>IP</th>
+                        <th>DATE TIME</th>
+                        <th>OUTCOME</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class='active-row'>
+                    ";        
         while($row = $query->fetch_assoc())
         {
-            $id = $row["id"];
-            $action_performed = $row["action_performed"];
-            $ip = $row["ip"];
-            $date_time = $row["date_time"];
-            $outcome = $row["outcome"];
-
-            echo '<div class="logs"><b>'.$id."</b>  ".$action_performed."  ".$ip."  ".$date_time."  <b>".$outcome.'</b></div><br/>';
+            echo "<tr>";
+            echo "<td>".$row["id"]."</td>";
+            echo "<td>".$row["action_performed"]."</td>";
+            echo "<td>".$row["ip"]."</td>";
+            echo "<td>".$row["date_time"]."</td>";
+            echo "<td>". $row["outcome"]."</td>";
+            echo "</tr>";
         }
-        echo '</span>';
+        echo '
+            </tr>
+            </table>';
     }
     $query->free();
 }
