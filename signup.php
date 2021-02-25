@@ -1,6 +1,6 @@
 <?php
-    require 'conf.php';
-    require 'security_methods.php';
+    include 'conf.php';
+    include 'security_methods.php';
     session_start();
     $create_user = true;
     if(isset($_POST['sign_up_username']) && isset($_POST['pass1']) && isset($_POST['pass2']))
@@ -10,6 +10,8 @@
         $password1 = filter($_POST['pass1']);
         if($username != $_POST['sign_up_username'] || $password1 != $_POST['pass1'] ||$password2 != $_POST['pass2'])
         {
+            $ip = $_SESSION['ip'];
+            $agent = $_SESSION['clientAgent'];
             log_activity("filter username and password", $ip, $agent, "illegal characters found");
             $create_user = false;
             $_SESSION['illegal_characters'] = true;

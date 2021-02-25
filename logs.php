@@ -92,29 +92,7 @@
             </body>
             </html>';
 
-    function get_log()
-    {
-        require_once 'conf.php';
-        $sql = "SELECT * FROM Logs";
-        if($query = $conn->query($sql))
-        {
-            echo '
-            <span class="login100-form-title p-b-20">
-                    Activity logs <br><br>';
-            while($row = $query->fetch_assoc())
-            {
-                $id = $row["id"];
-                $action_performed = $row["action_performed"];
-                $ip = $row["ip"];
-                $date_time = $row["date_time"];
-                $outcome = $row["outcome"];
 
-                echo '<div class="logs"><b>'.$id."</b>  ".$action_performed."  ".$ip."  ".$date_time."  <b>".$outcome.'</b></div><br/>';
-            }
-            echo '</span>';
-        }
-        $query->free();
-    }
 }
 else
 {
@@ -122,5 +100,31 @@ else
             alert('You are not logged in. Access denied'); 
             window.location.href='index.php';
         </script>";
+}
+?>
+
+<?php
+function get_log()
+{
+    include 'conf.php';
+    $sql = "SELECT * FROM Logs";
+    if($query = $conn->query($sql))
+    {
+        echo '
+        <span class="login100-form-title p-b-20">
+                Activity logs <br><br>';
+        while($row = $query->fetch_assoc())
+        {
+            $id = $row["id"];
+            $action_performed = $row["action_performed"];
+            $ip = $row["ip"];
+            $date_time = $row["date_time"];
+            $outcome = $row["outcome"];
+
+            echo '<div class="logs"><b>'.$id."</b>  ".$action_performed."  ".$ip."  ".$date_time."  <b>".$outcome.'</b></div><br/>';
+        }
+        echo '</span>';
+    }
+    $query->free();
 }
 ?>

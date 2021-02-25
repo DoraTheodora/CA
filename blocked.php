@@ -78,10 +78,10 @@
  
          </body>
          </html>';
+         $_SESSION['login_attempts'] = 0;
     }
     else
     {
-        $_SESSION['login_attempts'] = 0;
         header("Location: index.php");
     }
 ?>

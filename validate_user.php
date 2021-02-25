@@ -92,7 +92,6 @@
                     header("Location: blocked.php");
                 }
             }
-            $_SESSION['login_attempts'] = 0;
         }
     }
     else

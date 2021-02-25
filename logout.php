@@ -3,6 +3,6 @@
     echo $_SESSION["name"];
     session_unset();
     session_destroy();
-    echo session_id();
+    //echo session_id();
     header('Location: index.php');
 ?>

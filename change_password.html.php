@@ -1,6 +1,5 @@
 <?php
 	session_start();
-
     if(!isset($_SESSION['username_exists']))
     {
         $_SESSION['username_exists'] = false;
