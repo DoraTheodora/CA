@@ -1,8 +1,8 @@
 <?php
 	session_start();
-    if(!isset($_SESSION['username_exists']))
+    if(!isset($_SESSION['invalid_password']))
     {
-        $_SESSION['username_exists'] = false;
+        $_SESSION['invalid_password'] = false;
     }
     if(!isset($_SESSION['passwords_not_matching']))
     {
@@ -23,6 +23,10 @@
     if(!isset($_SESSION['illegal_characters']))
     {
         $_SESSION['illegal_characters'] = false;
+    }
+    if(!isset($_SESSION['new_pass_equals_old_pass']))
+    {
+        $_SESSION['new_pass_equals_old_pass'] = false;
     }
     
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
@@ -84,11 +88,11 @@
                             Change Password
                         </span>
                         <?php
-                            if($_SESSION['username_exists'])
+                            if($_SESSION['invalid_password'])
                             {
                                 echo "
-                                    <span class='error p-b-5'> <p> Username already is use </p></span>";
-                                $_SESSION['username_exists'] = false;
+                                    <span class='error p-b-5'> <p> Invalid current password </p></span>";
+                                $_SESSION['invalid_password'] = false;
                             }
                             if($_SESSION['passwords_not_matching'])
                             {
@@ -122,6 +126,12 @@
                                     <p>&nbsp;&nbsp;&nbsp;&nbsp; &amp  &lt  &gt  &#40  &#41  &#123  &#125
                                     &#91 &#93  &#34  &#39  &#59  &#47  &#92 </p>  </span>";
                                 $_SESSION['illegal_characters'] = false;
+                            }
+                            if($_SESSION['new_pass_equals_old_pass'])
+                            {
+                                echo "
+                                <span class='error p-b-5'> <p> The new password must be different from old password\nPlease try again </p> </span>";
+                                $_SESSION['new_pass_equals_old_pass'] = false;
                             }
                         ?>
                         <br>
