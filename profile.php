@@ -5,6 +5,7 @@
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
 		echo $_SESSION["id_s"];
+		
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -108,7 +109,7 @@
 	}
 	else
 	{
-		header("Location: index.php");
+		header("Location: login.html.php");
 	}
 ?>
 </html>

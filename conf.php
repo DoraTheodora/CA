@@ -1,3 +1,3 @@
 <?php
-    $conn = mysqli_connect("localhost:3306", "root", "", "tt");
+    $conn = mysqli_connect("localhost:3306", "root", "", "theodora");
 ?>

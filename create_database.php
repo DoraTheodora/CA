@@ -9,7 +9,7 @@
         createLog();
         echo "<script>
                 alert('The database was created!'); 
-                    window.location.href='index.php';
+                    window.location.href='login.html.php';
             </script>";
         session_unset();
         session_destroy();
@@ -18,7 +18,7 @@
     {
         echo "<script>
                 alert('The database was not created!'); 
-                    window.location.href='index.php';
+                    window.location.href='login.html.php';
             </script>";
     }
 
@@ -35,7 +35,7 @@
         }
     
         // Attempt create database query execution
-        $sql = "CREATE DATABASE TT";
+        $sql = "CREATE DATABASE theodora";
         $created = false;
         $query = $link->prepare($sql);
         if($query->execute())

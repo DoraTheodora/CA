@@ -80,7 +80,7 @@
                 else 
                 {
                     $start_date_time = date("Y-m-d H:i:s");
-                    $locked_until = date('Y-m-d H:i:s',strtotime('+5 minutes',strtotime($start_date_time)));
+                    $locked_until = date('Y-m-d H:i:s',strtotime('+3 minutes',strtotime($start_date_time)));
                     $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES (?, ?, ?)";
                     $query = $conn->prepare($sql);
                     $query->bind_param("sss",$ip, $agent, $locked_until);
@@ -103,6 +103,6 @@
     }
     else
     {
-        header('Location: index.php');
+        header('Location: login.html.php');
     }
 ?>

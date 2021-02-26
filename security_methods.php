@@ -4,6 +4,20 @@
 //* Secure login system
 //* 2021
 
+    function auto_logout($time_session_started)
+    {
+        $now = time();
+        $diff = $now - $time_session_started;
+        if ($diff > 3000)
+        {          
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     function is_user_locked()
         {
             //? This method checks is the device the users uses to log in is locked or not
@@ -218,7 +232,7 @@
             echo "<script>alert('Account created!')</script>";
             session_unset();
             session_destroy();
-            header('Refresh:0 url=index.php');
+            header('Refresh:0 url=login.html.php');
         }
         else
         {
@@ -340,7 +354,7 @@
             echo "<script>alert('Password change!!')</script>";
             session_unset();
             session_destroy();
-            header('Refresh:0 url=index.php');
+            header('Refresh:0 url=login.html.php');
         }
         else
         {
@@ -399,6 +413,7 @@
                             <th>ID</th>
                             <th>ACTION PERFORMED</th>
                             <th>IP</th>
+                            <th>AGENT</th>
                             <th>DATE TIME</th>
                             <th>OUTCOME</th>
                         </tr>
@@ -412,6 +427,7 @@
                 echo "<td>".$row["id"]."</td>";
                 echo "<td>".$row["action_performed"]."</td>";
                 echo "<td>".$row["ip"]."</td>";
+                echo "<td>".$row["clientAgent"]."</td>";
                 echo "<td>".$row["date_time"]."</td>";
                 echo "<td>". $row["outcome"]."</td>";
                 echo "</tr>";

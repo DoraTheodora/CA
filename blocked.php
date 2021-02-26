@@ -49,7 +49,7 @@
                                      Try again in about 3 minutes
                                  </span>
                                  <div class="flex-col-c p-t-30">
-                                 <a href="index.php" class="txt2 p-t-100">
+                                 <a href="login.html.php" class="txt2 p-t-100">
                                     Home Page
                                 </a>
                                 </div>
@@ -84,7 +84,7 @@
     }
     else
     {
-        header("Location: index.php");
+        header("Location: login.html.php");
     }
 ?>
 

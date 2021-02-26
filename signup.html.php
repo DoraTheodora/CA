@@ -144,7 +144,7 @@
                         </div>
                         
                         <div class="text-right p-t-8 p-b-31">
-                            <a href="index.php">
+                            <a href="login.html.php">
                                 Already have an account?
                             </a>
                         </div>

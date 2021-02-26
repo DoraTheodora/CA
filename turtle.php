@@ -94,7 +94,7 @@
 	{
 		echo "<script>
 				alert('You are not logged in. Access denied'); 
-				window.location.href='index.php';
+				window.location.href='login.html.php';
 			</script>";
 	}
 ?>
