@@ -3,6 +3,7 @@
 	header('X-Frame-Options: SAMEORIGIN');
 	include 'security_methods.php';
 	session_start();
+	session_regenerate_id();
 	if(!isset($_SESSION['login_attempts']))
 	{
 		$_SESSION['login_attempts'] = 0;

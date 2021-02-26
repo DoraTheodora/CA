@@ -222,10 +222,7 @@
 	}
 	else
 	{
-		echo "<script>
-				alert('You are not logged in. Access denied'); 
-				window.location.href='index.php';
-			</script>";
+		header("Location: index.php");
 	}
 ?>
 </html>

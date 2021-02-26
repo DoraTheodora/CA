@@ -43,6 +43,10 @@
                 $_SESSION['invalid_captcha'] = true;
                 header('Refresh:0');
             }
+            if($_SESSION['invalid_captcha'] == false)
+            {
+                validateUser($username, $password);
+            }
             else
             {
                 include 'conf.php';

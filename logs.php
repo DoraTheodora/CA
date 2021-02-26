@@ -2,6 +2,7 @@
     session_start();
     header("Content-Security-Policy: frame-ancestors 'none'", false);
 	header('X-Frame-Options: SAMEORIGIN');
+    require 'security_methods.php';
     if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
         echo'
@@ -98,51 +99,6 @@
 }
 else
 {
-    echo "<script>
-            alert('You are not logged in. Access denied'); 
-            window.location.href='index.php';
-        </script>";
-}
-?>
-
-<?php
-function get_log()
-{
-    include 'conf.php';
-    $sql = "SELECT * FROM Logs";
-    if($query = $conn->query($sql))
-    {
-        echo '
-        <span class="login100-form-title p-b-20">
-                Activity logs <br><br>
-            </span>';
-        echo "<table class='styled-table'>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>ACTION PERFORMED</th>
-                        <th>IP</th>
-                        <th>DATE TIME</th>
-                        <th>OUTCOME</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class='active-row'>
-                    ";        
-        while($row = $query->fetch_assoc())
-        {
-            echo "<tr>";
-            echo "<td>".$row["id"]."</td>";
-            echo "<td>".$row["action_performed"]."</td>";
-            echo "<td>".$row["ip"]."</td>";
-            echo "<td>".$row["date_time"]."</td>";
-            echo "<td>". $row["outcome"]."</td>";
-            echo "</tr>";
-        }
-        echo '
-            </tr>
-            </table>';
-    }
-    $query->free();
+    header("Location: index.php");
 }
 ?>

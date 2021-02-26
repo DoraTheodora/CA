@@ -383,4 +383,44 @@
         return $new_pass == $old_pass;
     }
 
+    function get_log()
+    {
+        include 'conf.php';
+        $sql = "SELECT * FROM Logs";
+        if($query = $conn->query($sql))
+        {
+            echo '
+            <span class="login100-form-title p-b-20">
+                    Activity logs <br><br>
+                </span>';
+            echo "<table class='styled-table'>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ACTION PERFORMED</th>
+                            <th>IP</th>
+                            <th>DATE TIME</th>
+                            <th>OUTCOME</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class='active-row'>
+                        ";        
+            while($row = $query->fetch_assoc())
+            {
+                echo "<tr>";
+                echo "<td>".$row["id"]."</td>";
+                echo "<td>".$row["action_performed"]."</td>";
+                echo "<td>".$row["ip"]."</td>";
+                echo "<td>".$row["date_time"]."</td>";
+                echo "<td>". $row["outcome"]."</td>";
+                echo "</tr>";
+            }
+            echo '
+                </tr>
+                </table>';
+        }
+        $query->free();
+    }
+
 ?>
