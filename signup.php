@@ -1,6 +1,8 @@
 <?php
     include 'conf.php';
     include 'security_methods.php';
+    header("Content-Security-Policy: frame-ancestors 'none'", false);
+	header('X-Frame-Options: SAMEORIGIN');
     session_start();
     $create_user = true;
     if(isset($_POST['sign_up_username']) && isset($_POST['pass1']) && isset($_POST['pass2']))

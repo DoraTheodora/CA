@@ -1,4 +1,6 @@
 <?php
+	header("Content-Security-Policy: frame-ancestors 'none'", false);
+	header('X-Frame-Options: SAMEORIGIN');
 	include 'security_methods.php';
 	session_start();
 	if(!isset($_SESSION['login_attempts']))

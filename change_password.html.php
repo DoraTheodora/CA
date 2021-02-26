@@ -1,37 +1,38 @@
 <?php
 	session_start();
-    if(!isset($_SESSION['invalid_password']))
-    {
-        $_SESSION['invalid_password'] = false;
-    }
-    if(!isset($_SESSION['passwords_not_matching']))
-    {
-        $_SESSION['passwords_not_matching'] = false;
-    }
-    if(!isset($_SESSION['password_too_short']))
-    {
-        $_SESSION['password_too_short'] = false;
-    }
-    if(!isset($_SESSION['password_needs_other_type_of_characters']))
-    {
-        $_SESSION['password_needs_other_type_of_characters'] = false;
-    }
-    if(!isset($_SESSION['username_in_password']))
-    {
-        $_SESSION['username_in_password'] = false;
-    }
-    if(!isset($_SESSION['illegal_characters']))
-    {
-        $_SESSION['illegal_characters'] = false;
-    }
-    if(!isset($_SESSION['new_pass_equals_old_pass']))
-    {
-        $_SESSION['new_pass_equals_old_pass'] = false;
-    }
-    
+    header("Content-Security-Policy: frame-ancestors 'none'", false);
+	header('X-Frame-Options: SAMEORIGIN');
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
 		echo $_SESSION["id_s"];
+        if(!isset($_SESSION['invalid_password']))
+        {
+            $_SESSION['invalid_password'] = false;
+        }
+        if(!isset($_SESSION['passwords_not_matching']))
+        {
+            $_SESSION['passwords_not_matching'] = false;
+        }
+        if(!isset($_SESSION['password_too_short']))
+        {
+            $_SESSION['password_too_short'] = false;
+        }
+        if(!isset($_SESSION['password_needs_other_type_of_characters']))
+        {
+            $_SESSION['password_needs_other_type_of_characters'] = false;
+        }
+        if(!isset($_SESSION['username_in_password']))
+        {
+            $_SESSION['username_in_password'] = false;
+        }
+        if(!isset($_SESSION['illegal_characters']))
+        {
+            $_SESSION['illegal_characters'] = false;
+        }
+        if(!isset($_SESSION['new_pass_equals_old_pass']))
+        {
+            $_SESSION['new_pass_equals_old_pass'] = false;
+        }
 ?>
         <!DOCTYPE html>
     <html lang="en">

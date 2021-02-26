@@ -1,5 +1,7 @@
 <?php
     session_start();
+    header("Content-Security-Policy: frame-ancestors 'none'", false);
+	header('X-Frame-Options: SAMEORIGIN');
     if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
         echo'

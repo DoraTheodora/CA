@@ -1,5 +1,7 @@
 <?php
     session_start();
+    header("Content-Security-Policy: frame-ancestors 'none'", false);
+	header('X-Frame-Options: SAMEORIGIN');
     if($_SESSION['lockedTime'] > time())
     {
         //echo $_SESSION['lockedTime'];
