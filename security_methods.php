@@ -23,68 +23,61 @@
     }
 
     function is_user_locked()
+    {
+        //? This method checks is the device the users uses to log in is locked or not
+        include 'conf.php';
+        $ip = $_SESSION['ip'];
+        $agent = $_SESSION['clientAgent'];
+        $sql = "SELECT MAX(locked_until) FROM NoGuests WHERE ip=? AND clientAgent=?";
+        $query = $conn->prepare($sql);
+        $query->bind_param("ss",$ip, $agent);
+        $query->execute();
+        $suspiciousUser = $query->get_result()->fetch_array();
+        $query->close();
+        $locked_until = strtotime($suspiciousUser[0]);
+        $blocked_time = $locked_until-time();
+        /*echo $sql;
+        echo "<br>Blocked until:".$locked_until;
+        echo "<br>Current time: ".time();
+        echo "<br>Blocked time: ".$blocked_time;*/
+        $_SESSION['lockedTime'] = $locked_until;
+        if(!empty($suspiciousUser))
         {
-            //? This method checks is the device the users uses to log in is locked or not
-            include 'conf.php';
-            $ip = $_SESSION['ip'];
-            $agent = $_SESSION['clientAgent'];
-            $sql = "SELECT MAX(locked_until) FROM NoGuests WHERE ip=? AND clientAgent=?";
-            $query = $conn->prepare($sql);
-            $query->bind_param("ss",$ip, $agent);
-            $query->execute();
-            $suspiciousUser = $query->get_result()->fetch_array();
-            $query->close();
-            $locked_until = strtotime($suspiciousUser[0]);
-            $blocked_time = $locked_until-time();
-            /*echo $sql;
-            echo "<br>Blocked until:".$locked_until;
-            echo "<br>Current time: ".time();
-            echo "<br>Blocked time: ".$blocked_time;*/
-            $_SESSION['lockedTime'] = $locked_until;
-            if(!empty($suspiciousUser))
+            if($blocked_time > 0)
             {
-                if($blocked_time > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {
                 return false;
             }
         }
-    function validateUser($username, $password)
+        else
         {
-            //? This method checks the user's credentials
-            include 'conf.php';
-            if(!is_user_locked())
+            return false;
+        }
+    }
+    function validateUser($username, $password)
+    {
+        //? This method checks the user's credentials
+        include 'conf.php';
+        if(!is_user_locked())
+        {
+            $sql = "SELECT salt, passwd FROM MyGuests WHERE user=?";
+            $query = $conn->prepare($sql);
+            $query->bind_param("s", $username);
+            $query->execute();
+            $result = $query->get_result()->fetch_assoc();
+            $ip = $_SESSION['ip'];
+            $agent = $_SESSION['clientAgent'];
+            if(!empty($result))
             {
-                $sql = "SELECT salt, passwd FROM MyGuests WHERE user=?";
-                $query = $conn->prepare($sql);
-                $query->bind_param("s", $username);
-                $query->execute();
-                $result = $query->get_result()->fetch_assoc();
-                $ip = $_SESSION['ip'];
-                $agent = $_SESSION['clientAgent'];
-                if(!empty($result))
+                $salt = $result['salt'];
+                $pass = $result['passwd'];
+                $to_hash = $password . $salt;
+                if(password_verify($to_hash, $pass))
                 {
-                    $salt = $result['salt'];
-                    $pass = $result['passwd'];
-                    $to_hash = $password . $salt;
-                    if(password_verify($to_hash, $pass))
-                    {
-                        logIn($username, $pass, $conn);
-                    }
-                    else
-                    {
-                        log_activity("authentication", $ip, $agent, "invalid credentials");
-                        $_SESSION['incorrect_credentials'] = true;
-                        header('Refresh:0');
-                    }
+                    logIn($username, $pass, $conn);
                 }
                 else
                 {
@@ -92,14 +85,21 @@
                     $_SESSION['incorrect_credentials'] = true;
                     header('Refresh:0');
                 }
-                $query->close();
             }
             else
             {
-                $_SESSION['blocked'] = true;
-                header("Location: blocked.php");
+                log_activity("authentication", $ip, $agent, "invalid credentials");
+                $_SESSION['incorrect_credentials'] = true;
+                header('Refresh:0');
             }
+            $query->close();
         }
+        else
+        {
+            $_SESSION['blocked'] = true;
+            header("Location: blocked.php");
+        }
+    }
     function logIn($username, $pass, $conn)
     {
         $SQL = "SELECT user FROM MyGuests WHERE user=? AND passwd=?";

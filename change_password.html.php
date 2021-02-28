@@ -5,6 +5,7 @@
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
 		echo $_SESSION["id_s"];
+        $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
         if(!isset($_SESSION['invalid_password']))
         {
             $_SESSION['invalid_password'] = false;
@@ -32,6 +33,10 @@
         if(!isset($_SESSION['new_pass_equals_old_pass']))
         {
             $_SESSION['new_pass_equals_old_pass'] = false;
+        }
+        if(!isset($_SESSION['CSRF_Message']))
+        {
+            $_SESSION['CSRF_Message'] = false;
         }
         $idle_time = time() - $_SESSION['time_user_logged_in'];
 		echo "<br>Idle time: ".$idle_time."s";
@@ -151,6 +156,12 @@
                                                 <span class='error p-b-5'> <p> The new password must be different from old password\nPlease try again </p> </span>";
                                                 $_SESSION['new_pass_equals_old_pass'] = false;
                                             }
+                                            if($_SESSION['CSRF_Message'])
+                                            {
+                                                echo "
+                                                <span class='error p-b-5'> <p> Some error occurred. Please try again! </p> </span>";
+                                                $_SESSION['CSRF_Message'] = false;
+                                            }
                                         ?>
                                         <br>
                                         <div class="wrap-input100 validate-input m-b-23" data-validate = "Password is required">
@@ -169,6 +180,7 @@
                                             <input class="input100" type="password" name="pass2" placeholder="Re-enter your new password" required>
                                             <span class="focus-input100" data-symbol="&#xf190;"></span>
                                         </div>
+                                        <input type="hidden" name="token" value="<?= $_SESSION['CSRF_Token'] ?>" />
                                         <div class="container-login100-form-btn">
                                             <div class="wrap-login100-form-btn">
                                                 <div class="login100-form-bgbtn"></div>
