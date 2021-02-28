@@ -7,7 +7,7 @@
     {
 
     }
-    
+
     function auto_logout($time_session_started)
     {
         $now = time();
@@ -124,6 +124,8 @@
                 //$result = mysqli_query($conn, $sql);
                 session_id(generateRandomSessionID());
                 session_start(); 
+                $_SESSION['time_user_logged_in'] = time();
+                $_SESSION['max_session_duration'] = time() + 3600;
                 $_SESSION["id_s"] = session_id();
                 $_SESSION["name"] = $username;    
                 if(is_admin($username))
