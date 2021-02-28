@@ -125,6 +125,7 @@
                 session_id(generateRandomSessionID());
                 session_start(); 
                 $_SESSION['time_user_logged_in'] = time();
+                $_SESSION['max_idle_duration'] = 600;
                 $_SESSION['max_session_duration'] = time() + 3600;
                 $_SESSION["id_s"] = session_id();
                 $_SESSION["name"] = $username;    
