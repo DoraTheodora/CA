@@ -11,7 +11,9 @@
             <head>
                 <title>Theodora Tataru</title>
                 <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1">
+                <meta name="viewport" content="width=device-width, initial-scale=1">';
+                echo $_SESSION['idle_user'];
+            echo '
             <!--===============================================================================================-->	
                 <link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
             <!--===============================================================================================-->

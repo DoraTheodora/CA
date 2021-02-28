@@ -5,6 +5,7 @@
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
 		echo $_SESSION["id_s"];
+		$_SESSION['idle_user'] = '<meta http-equiv="refresh" content="10;url=logout.php"/>';
 		
 ?>
 <!DOCTYPE html>
@@ -13,6 +14,7 @@
 	<title>Theodora Tataru</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?= $_SESSION['idle_user'] ?>
 <!--===============================================================================================-->	
 	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
 <!--===============================================================================================-->

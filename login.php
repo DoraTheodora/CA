@@ -38,12 +38,7 @@
         }
         else if($_SESSION['login_attempts'] >= 5)
         {
-            if(($_POST["vercode"] != $_SESSION["vercode"] || $_SESSION["vercode"]==''))
-            {
-                $_SESSION['invalid_captcha'] = true;
-                header('Refresh:0');
-            }
-            if($_SESSION['invalid_captcha'] == false)
+            if(($_POST["vercode"] == $_SESSION["vercode"] && $_SESSION["vercode"]!=''))
             {
                 validateUser($username, $password);
             }

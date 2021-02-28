@@ -3,7 +3,11 @@
 //* C00231174
 //* Secure login system
 //* 2021
+    function log_out_after_one_hour()
+    {
 
+    }
+    
     function auto_logout($time_session_started)
     {
         $now = time();

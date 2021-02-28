@@ -79,7 +79,7 @@
         <span class="author p-b-1" > 2021</span>
 		<div class="container-login100" style="background-image: url('images/bg-01.jpg');">
 			<div class="wrap-login100 p-l-30 p-r-30 p-t-65 p-b-54">
-				<form class="login100-form validate-form" method='POST' action='validate_user.php'>
+				<form class="login100-form validate-form" method='POST' action='login.php'>
 					<span class="login100-form-title p-b-49">
 						Login
 					</span>
