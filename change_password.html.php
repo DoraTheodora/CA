@@ -1,7 +1,7 @@
 <?php
-	session_start();
     header("Content-Security-Policy: frame-ancestors 'none'", false);
 	header('X-Frame-Options: SAMEORIGIN');
+	session_start();
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
 		echo $_SESSION["id_s"];
@@ -213,6 +213,11 @@
                                                         Pretty Turtle
                                                     </a>
                                                 </span>
+                                                <span class="txt1 p-b-2">
+													<a href="php_info.php" class="txt2">
+														PHP Info
+													</a>
+												</span>
                                                 <span class="txt1 p-b-2">
                                                     <a href="logout.php" class="txt2">
                                                         Log out

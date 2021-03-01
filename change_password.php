@@ -1,7 +1,7 @@
 <?php
-    session_start();
     header("Content-Security-Policy: frame-ancestors 'none'", false);
 	header('X-Frame-Options: SAMEORIGIN');
+    session_start();
     include 'conf.php';
     include 'security_methods.php';
     if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"] && isset($_SESSION['CSRF_Token']))
@@ -14,10 +14,10 @@
             $password2 = filter($_GET['pass2']);
             $password1 = filter($_GET['pass1']);
             $CSRF_Token = filter($_GET['token']);
+            $agent = getClientAgent();
+            $ip = getIPAddress();
             if($existing_pass != $_GET['existing_password'] || $password1 != $_GET['pass1'] ||$password2 != $_GET['pass2'])
             {
-                $agent = getClientAgent();
-                $ip = getIPAddress();
                 log_activity("filter username and password", $ip, $agent, "illegal characters found");
                 $change_password = false;
                 $_SESSION['illegal_characters'] = true;
@@ -41,7 +41,6 @@
             {
                 $change_password = false;
                 $_SESSION['invalid_password'] = true;
-                //TODO: do not allow the user to go back
                 $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
                 header("Location: change_password.html.php");
             }

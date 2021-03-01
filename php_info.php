@@ -1,11 +1,11 @@
 <?php
-    session_start();
-    header("Content-Security-Policy: frame-ancestors 'none'", false);
+    header("Content-Security-Policy: frame-ancestors 'none'", false);       
 	header('X-Frame-Options: SAMEORIGIN');
-    require 'security_methods.php';
-    if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
+	session_start();
+	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
-        $idle_time = time() - $_SESSION['time_user_logged_in'];
+		echo $_SESSION["id_s"];
+		$idle_time = time() - $_SESSION['time_user_logged_in'];
 		echo "<br>Idle time: ".$idle_time."s";
 		$max_time_allowed = time() - $_SESSION['max_session_duration'];
 		echo "<br>Max Time Allowed: ". $max_time_allowed."s";
@@ -22,8 +22,8 @@
 			else
 			{
 				$_SESSION['time_user_logged_in'] = time();	
-                echo'
-                    <!DOCTYPE html>
+                echo 
+                    '<!DOCTYPE html>
                     <html lang="en">
                     <head>
                         <title>Theodora Tataru</title>
@@ -56,49 +56,40 @@
                         <form action>
                             <div class="limiter">
                                 <span class="author p-b-49" > Theodora Tataru, C00231174 <br> 2021 </span> 
-                                <div>';
-                                    if($_SESSION['is_admin']==false)
-                                    {
-                                        echo '<span class="login100-form-title p-b-49">
-                                        We are sorry, you are not authorized to see this page
-                                        </span>';
-                                    }
-                                    else
-                                    {
-                                        get_log();
-                                    }
-                                    echo '
-                                    <span class="login100-form-title p-b-20">
-                                            <span class="txt1 p-b-2">
-                                                <a href="profile.php" class="txt2">
-                                                    Profile
-                                                </a>
-                                            </span><br>
-                                            <span class="txt1 p-b-2">
-													<a href="change_password.html.php" class="txt2">
-														Change Password
-													</a>
-                                            </span><br>
-                                            <span class="txt1 p-b-2">
-                                                <a href="php_info.php" class="txt2">
-                                                    PHP Info
-                                                </a>
-                                            </span><br>
-                                            <span class="txt1 p-b-2">
-                                                <a href="turtle.php" class="txt2">
-                                                    Pretty Turtle
-                                                </a>
-                                            </span><br>
-                                            <span class="txt1 p-b-2">
-                                                <a href="logout.php" class="txt2">
-                                                    Log out
-                                                </a>
-                                            </span><br><br><br><br>
-                                        </span>
+                                <div class="container-login100">
+                                    <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
+                                        <form class="login100-form validate-form">
+                                                <div class="flex-col-c p-t-30">
+                                                    <span class="txt1 p-b-2">
+                                                        <a href="profile.php" class="txt2">
+                                                            Profile
+                                                        </a>
+                                                    </span>
+                                                    <span class="txt1 p-b-2">
+                                                        <a href="change_password.html.php" class="txt2">
+                                                            Change Password
+                                                        </a>
+                                                    </span>
+                                                    <span class="txt1 p-b-2">
+                                                        <a href="turtle.php" class="txt2">
+                                                            Turtle
+                                                        </a>
+                                                    </span>
+                                                    <span class="txt1 p-b-2">
+                                                        <a href="logout.php" class="txt2">
+                                                            Log out
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </span>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
-                        </form>
-
+                        </form>';
+                        echo phpinfo();
+                        
+                        echo'
                         <div id="dropDownSelect1"></div>
                         
                     <!--===============================================================================================-->
@@ -118,14 +109,12 @@
                     <!--===============================================================================================-->
                         <script src="js/main.js"></script>
 
-                    </body>
-                    </html>';
-                                }
-
+                    </body>';
             }
         }
+    }
     else
     {
         header("Location: login.html.php");
     }
-    ?>
+?>

@@ -3,11 +3,6 @@
 //* C00231174
 //* Secure login system
 //* 2021
-    function log_out_after_one_hour()
-    {
-
-    }
-
     function auto_logout($time_session_started)
     {
         $now = time();
@@ -194,14 +189,11 @@
 
     function filter($toClean)
     {
+        $trimmed = trim($toClean);
         $symbolsToBeReplaced = Array('&', '<', '>',  '(', ')', '{', '}', '[' ,']', '"', "'", ';' , '/', '\\');
         $replaceSymbols = Array('&amp', '&lt', '&gt', '&#40', '&#41', '&#123', '&#125',
                                 '&#91', '&#93', '&#34', '&#39', '&#59', '&#47', '&#92');
-        $sanitizedString = str_replace($symbolsToBeReplaced, $replaceSymbols, $toClean);
-        #if($sanitizedString != $toClean)
-        #{
-        #	return "No injections here buddy!";
-        #}
+        $sanitizedString = str_replace($symbolsToBeReplaced, $replaceSymbols, $trimmed);
         return $sanitizedString;
     }
     

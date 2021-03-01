@@ -73,6 +73,16 @@
 													</a>
 												</span>
 												<span class="txt1 p-b-2">
+													<a href="change_password.html.php" class="txt2">
+														Change Password
+													</a>
+												</span>
+												<span class="txt1 p-b-2">
+													<a href="php_info.php" class="txt2">
+														PHP Info
+													</a>
+												</span>
+												<span class="txt1 p-b-2">
 													<a href="logout.php" class="txt2">
 														Log out
 													</a>
