@@ -1,7 +1,9 @@
     <?php
+    require 'security_methods.php';
     session_start();
     header("Content-Security-Policy: frame-ancestors 'none'", false);
 	header('X-Frame-Options: SAMEORIGIN');
+    is_user_locked();
     if($_SESSION['lockedTime'] < time())
     {
         if(!isset($_SESSION['username_exists']))

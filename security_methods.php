@@ -21,8 +21,8 @@
     {
         //? This method checks is the device the users uses to log in is locked or not
         include 'conf.php';
-        $ip = $_SESSION['ip'];
-        $agent = $_SESSION['clientAgent'];
+        $ip = getIPAddress();
+        $agent = getClientAgent();
         $sql = "SELECT MAX(locked_until) FROM NoGuests WHERE ip=? AND clientAgent=?";
         $query = $conn->prepare($sql);
         $query->bind_param("ss",$ip, $agent);

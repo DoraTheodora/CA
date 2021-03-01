@@ -2,8 +2,8 @@
     header("Content-Security-Policy: frame-ancestors 'none'", false);
     header('X-Frame-Options: SAMEORIGIN');
     require 'security_methods.php';
-    
     session_start();
+    
     if($_SESSION['lockedTime'] > time())
 	{
 		header("Location: blocked.php");

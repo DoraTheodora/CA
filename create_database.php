@@ -59,7 +59,7 @@
             user VARCHAR(250) NOT NULL,
             passwd VARCHAR(250) NOT NULL,
             salt VARCHAR(250) NOT NULL,
-            login_date DATETIME(6),
+            login_date DATETIME(6) NOT NULL,
             ip VARCHAR(250) NOT NULL,
             clientAgent VARCHAR(250) NOT NULL,
             isAdmin INTEGER(5) NOT NULL
@@ -95,7 +95,7 @@
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             ip VARCHAR(250) NOT NULL,
             clientAgent VARCHAR(500) NOT NULL,
-            locked_until DATETIME(6)
+            locked_until DATETIME(6) NOT NULL
         )";
         $query = $conn->prepare($sql);
         $query->execute();
