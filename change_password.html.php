@@ -4,7 +4,7 @@
 	session_start();
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
-		echo $_SESSION["id_s"];
+		//echo $_SESSION["id_s"];
         $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
         if(!isset($_SESSION['invalid_password']))
         {

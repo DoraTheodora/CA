@@ -4,7 +4,7 @@
 	session_start();
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
-		echo $_SESSION["id_s"];
+		//echo $_SESSION["id_s"];
 		$idle_time = time() - $_SESSION['time_user_logged_in'];
 		echo "<br>Idle time: ".$idle_time."s";
 		$max_time_allowed = time() - $_SESSION['max_session_duration'];
