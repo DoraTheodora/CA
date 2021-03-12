@@ -69,7 +69,7 @@
             {
                 $salt = $result['salt'];
                 $pass = $result['passwd'];
-                $to_hash = $password . $salt;
+                $to_hash = $password . $salt; //! SALT IS FIRST!!! - SO YOU CAN'T SEE WHERE THE PREDICTABILITY BEGINS
                 if(password_verify($to_hash, $pass))
                 {
                     logIn($username, $pass, $conn);
@@ -181,7 +181,7 @@
         $session_id = "";
         for($i = 0 ; $i < $length; $i++)
         {
-            $index = rand(0, strlen($characters) -1);
+            $index = rand(0, strlen($characters) -1); //!RAND_INT
             $session_id .= $characters[$index];
         }
         return $session_id;
@@ -310,6 +310,8 @@
 
     function getClientAgent()
     {
+        //! could contain something bad - sanitize it! can be spoofed
+        //! store the session ID in the database while the user is online
         return $_SERVER['HTTP_USER_AGENT'];
     }
 
