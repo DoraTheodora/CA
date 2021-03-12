@@ -20,7 +20,7 @@
     function is_user_locked()
     {
         //? This method checks is the device the users uses to log in is locked or not
-        include 'conf.php';
+        require 'conf.php';
         $ip = getIPAddress();
         $agent = getClientAgent();
         $sql = "SELECT MAX(locked_until) FROM NoGuests WHERE ip=? AND clientAgent=?";
@@ -55,7 +55,7 @@
     function validateUser($username, $password)
     {
         //? This method checks the user's credentials
-        include 'conf.php';
+        require 'conf.php';
         if(!is_user_locked())
         {
             $sql = "SELECT salt, passwd FROM MyGuests WHERE user=?";
@@ -151,7 +151,7 @@
     }
     function is_admin($username)
     {
-        include 'conf.php';
+        require 'conf.php';
         $sql = "SELECT isAdmin FROM MyGuests WHERE user=?";
         $query = $conn->prepare($sql);
         $query->bind_param("s",$username);
@@ -198,7 +198,7 @@
     
     function log_activity($action, $ip, $agent, $outcome)
     {
-        include 'conf.php';
+        require 'conf.php';
         $sql = "INSERT INTO Logs(action_performed, ip, clientAgent, date_time, outcome) VALUES (?,?,?,?,?)";
         if($query = $conn->prepare($sql))
         {
@@ -337,7 +337,7 @@
 
     function change_password($username, $password)
     {
-        include 'conf.php';
+        require 'conf.php';
         $salt = generateSalt();
         $to_hash = $password . $salt;
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
@@ -366,7 +366,7 @@
 
     function check_existing_password($username, $password)
     {
-        include 'conf.php';
+        require 'conf.php';
         $sql = "SELECT salt, passwd FROM MyGuests WHERE user=?";
         $query = $conn->prepare($sql);
         $query->bind_param("s", $username);
@@ -399,7 +399,7 @@
 
     function get_log()
     {
-        include 'conf.php';
+        require 'conf.php';
         $sql = "SELECT * FROM Logs";
         if($query = $conn->query($sql))
         {

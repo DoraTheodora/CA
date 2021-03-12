@@ -1,8 +1,12 @@
 <?php
-    include 'conf.php';
-    include 'security_methods.php';
+    require 'conf.php';
+    require 'security_methods.php';
     header("Content-Security-Policy: frame-ancestors 'none'", false);
 	header('X-Frame-Options: SAMEORIGIN');
+	header('X-XSS-Protection: 1; mode=block');
+	header('X-Frame-Options: DENY');
+	header('X-Content-Type-Options: nosniff');
+	session_cache_limiter('nocache');
     session_start();
     $create_user = true;
     if(isset($_POST['sign_up_username']) && isset($_POST['pass1']) && isset($_POST['pass2']))

@@ -1,7 +1,7 @@
 <?php
 	//header("Content-Security-Policy: frame-ancestors 'none'", false);
 	//header('X-Frame-Options: SAMEORIGIN');
-	include 'security_methods.php';
+	require 'security_methods.php';
 	session_start();
 	session_regenerate_id();
 	if(!isset($_SESSION['login_attempts']))

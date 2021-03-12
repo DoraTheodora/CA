@@ -1,8 +1,14 @@
 <?php
+    header("Content-Security-Policy: frame-ancestors 'none'", false);
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-XSS-Protection: 1; mode=block');
+    header('X-Frame-Options: DENY');
+    header('X-Content-Type-Options: nosniff');
+    session_cache_limiter('nocache');
     session_start();
     if(createDatabase())
     {
-        include 'conf.php';
+        require 'conf.php';
         createMyGuests();
         create_admin();
         createNoGuests();
@@ -24,7 +30,7 @@
 
     function createDatabase()
     {
-        include 'conf_admin.php';
+        require 'conf_admin.php';
         /* Attempt MySQL server connection. Assuming you are running MySQL
         server with default setting (user 'root' with no password) */
         $created = false;
@@ -52,7 +58,7 @@
     
     function createMyGuests()
     {  
-        include 'conf.php';
+        require 'conf.php';
         $sql = "CREATE TABLE MyGuests
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -71,7 +77,7 @@
 
     function create_admin()
     {
-        include 'conf.php';
+        require 'conf.php';
         $salt = generateSalt();
         $to_hash = "Password1!" . $salt;
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
@@ -89,7 +95,7 @@
 
     function createNoGuests()
     {
-        include 'conf.php';
+        require 'conf.php';
         $sql = "CREATE TABLE NoGuests
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -104,7 +110,7 @@
 
     function createLog()
     {
-        include 'conf.php';
+        require 'conf.php';
         $sql = "CREATE TABLE Logs
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,

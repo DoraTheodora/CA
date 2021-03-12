@@ -1,6 +1,10 @@
 <?php
     header("Content-Security-Policy: frame-ancestors 'none'", false);
-    header('X-Frame-Options: SAMEORIGIN');
+	header('X-Frame-Options: SAMEORIGIN');
+	header('X-XSS-Protection: 1; mode=block');
+	header('X-Frame-Options: DENY');
+	header('X-Content-Type-Options: nosniff');
+	session_cache_limiter('nocache');
     require 'security_methods.php';
     session_start();
     
@@ -47,7 +51,7 @@
                 }
                 else
                 {
-                    include 'conf.php';
+                    require 'conf.php';
                     $ip = $_SESSION['ip'];
                     $agent = $_SESSION['clientAgent'];
                     $sql = "SELECT * FROM NoGuests WHERE ip=? AND clientAgent=?";
