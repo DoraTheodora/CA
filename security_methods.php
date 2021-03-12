@@ -3,6 +3,59 @@
 //* C00231174
 //* Secure login system
 //* 2021
+
+    function lock_user()
+    {
+        require 'conf.php';
+        $ip = $_SESSION['ip'];
+        $agent = $_SESSION['clientAgent'];
+        $sql = "SELECT * FROM NoGuests WHERE ip=? AND clientAgent=?";
+        $query = $conn->prepare($sql);
+        $query->bind_param("ss", $ip, $agent);
+        $query->execute();
+        //$suspiciousAgent = mysqli_query($conn, $sql);
+        //$rows = mysqli_num_rows($suspiciousAgent);
+        $results = $query->get_result()->fetch_assoc();
+        if(!empty($results))
+        {
+            $start_date_time = date("Y-m-d H:i:s");
+            $locked_until = date('Y-m-d H:i:s',strtotime('+3 minutes',strtotime($start_date_time)));
+            
+            $sql = "UPDATE NoGuests SET locked_until = ? WHERE ip=? AND clientAgent=?";
+            $query = $conn->prepare($sql);
+            $query->bind_param("sss", $locked_until, $ip, $agent);
+            if(!$query->execute())
+            {
+                "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
+            }
+            else
+            {
+                log_activity("failed auth more than 5 times", $ip, $agent, "blocked");
+            }  
+            $query->close();
+        }
+        else 
+        {
+            $start_date_time = date("Y-m-d H:i:s");
+            $locked_until = date('Y-m-d H:i:s',strtotime('+3 minutes',strtotime($start_date_time)));
+            $sql = "INSERT INTO NoGuests(ip, clientAgent, locked_until) VALUES (?, ?, ?)";
+            $query = $conn->prepare($sql);
+            $query->bind_param("sss",$ip, $agent, $locked_until);
+            if(!$query->execute()) 
+            {
+                "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
+            } 
+            else
+            {
+                log_activity("failed auth more than 5 times", $ip, $agent, "blocked");
+            }
+            $query->close();
+        }
+        if(is_user_locked()) 
+        {
+            header("Location: blocked.php");
+        }
+    }
     function auto_logout($time_session_started)
     {
         $now = time();
@@ -69,7 +122,7 @@
             {
                 $salt = $result['salt'];
                 $pass = $result['passwd'];
-                $to_hash = $password . $salt; //! SALT IS FIRST!!! - SO YOU CAN'T SEE WHERE THE PREDICTABILITY BEGINS
+                $to_hash = $salt . $password; //! SALT IS FIRST!!! - SO YOU CAN'T SEE WHERE THE PREDICTABILITY BEGINS
                 if(password_verify($to_hash, $pass))
                 {
                     logIn($username, $pass, $conn);
@@ -215,7 +268,7 @@
     function createAccount($username, $password, $conn)
     {
         $salt = generateSalt();
-        $to_hash = $password . $salt;
+        $to_hash = $salt . $password;
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];
@@ -243,12 +296,12 @@
     function generateSalt()
     {
         $length = 96;
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $salt = "";
-        for($i = 0 ; $i < $length; $i++)
+        $salt = '';
+        for($i = 0; $i < $length; $i++)
         {
-            $index = rand(0, strlen($characters) -1);
-            $salt .= $characters[$index];
+            $num = random_int(0, 36);
+            $char = base_convert($num, 10, 36);
+            $salt = $salt.$char;
         }
         return $salt;
     } 
@@ -339,7 +392,7 @@
     {
         require 'conf.php';
         $salt = generateSalt();
-        $to_hash = $password . $salt;
+        $to_hash = $salt .$password;
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
         $agent = getClientAgent();
         $ip = getIPAddress();
@@ -376,7 +429,7 @@
         {
             $salt = $result['salt'];
             $pass = $result['passwd'];
-            $to_hash = $password . $salt;
+            $to_hash = $salt .  $password;
             if(password_verify($to_hash, $pass))
             {
                 return true;

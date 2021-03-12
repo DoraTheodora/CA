@@ -1,8 +1,12 @@
     <?php
     require 'security_methods.php';
-    session_start();
     header("Content-Security-Policy: frame-ancestors 'none'", false);
 	header('X-Frame-Options: SAMEORIGIN');
+	header('X-XSS-Protection: 1; mode=block');
+	header('X-Frame-Options: DENY');
+	header('X-Content-Type-Options: nosniff');
+	session_cache_limiter('nocache');
+    session_start();
     is_user_locked();
     if($_SESSION['lockedTime'] < time())
     {

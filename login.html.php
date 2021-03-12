@@ -2,8 +2,16 @@
 	//header("Content-Security-Policy: frame-ancestors 'none'", false);
 	//header('X-Frame-Options: SAMEORIGIN');
 	require 'security_methods.php';
+	header("Content-Security-Policy: frame-ancestors 'none'", false);
+	header('X-Frame-Options: SAMEORIGIN');
+	header('X-XSS-Protection: 1; mode=block');
+	header('X-Frame-Options: DENY');
+	header('X-Content-Type-Options: nosniff');
+	session_cache_limiter('nocache');
+
 	session_start();
 	session_regenerate_id();
+	is_user_locked();
 	if(!isset($_SESSION['login_attempts']))
 	{
 		$_SESSION['login_attempts'] = 0;
