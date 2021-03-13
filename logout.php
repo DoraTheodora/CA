@@ -16,5 +16,8 @@
     session_unset();
     session_destroy();
     
+    session_id(generateRandomSessionID());
+	session_start();
+	setcookie('sesh', session_id(), time()+3600, '/');
     header('Location: login.html.php');
 ?>
