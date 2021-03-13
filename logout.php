@@ -15,6 +15,6 @@
     delete_session_at_log_out();
     session_unset();
     session_destroy();
-    //echo session_id();
+    
     header('Location: login.html.php');
 ?>

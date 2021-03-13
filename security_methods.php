@@ -18,6 +18,7 @@
             "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
         }
     }
+    
     function check_session_id()
     {
         require 'conf.php';
@@ -168,6 +169,7 @@
             return false;
         }
     }
+
     function validateUser($username, $password)
     {
         //? This method checks the user's credentials
@@ -211,6 +213,7 @@
             header("Location: blocked.php");
         }
     }
+
     function logIn($username, $pass, $conn)
     {
         $SQL = "SELECT user FROM MyGuests WHERE user=? AND passwd=?";
@@ -269,6 +272,7 @@
             echo $query->error;
         }  
     }
+
     function is_admin($username)
     {
         require 'conf.php';
@@ -294,6 +298,7 @@
         }
         return false;
     }
+
     function generateRandomSessionID()
     {
         $length = 64;

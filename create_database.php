@@ -1,4 +1,8 @@
 <?php
+    // Theodora Tataru
+    // C00231174 
+    // Secure login page
+    // 2021
     header("Content-Security-Policy: frame-ancestors 'none'", false);
     header('X-Frame-Options: SAMEORIGIN');
     header('X-XSS-Protection: 1; mode=block');

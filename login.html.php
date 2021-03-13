@@ -9,8 +9,10 @@
 	header('X-Content-Type-Options: nosniff');
 	session_cache_limiter('nocache');
 
+	session_id(generateRandomSessionID());
 	session_start();
-	session_regenerate_id(generateRandomSessionID());
+	setcookie('sesh', session_id(), time()+3600, '/');
+	
 	is_user_locked();
 	if(!isset($_SESSION['login_attempts']))
 	{
