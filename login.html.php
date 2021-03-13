@@ -76,7 +76,7 @@
 					if($_SESSION['incorrect_credentials'])
 					{
 						echo "
-							<span class='error p-b-5'> <p>"; echo $_SESSION['username']; echo ", the username or password is fincorrect! Please try again </p> </span><br>";
+							<span class='error p-b-5'> <p>"; echo $_SESSION['username']; echo ", the username or password is incorrect! Please try again </p> </span><br>";
 						$_SESSION['incorrect_credentials'] = false;
 					}
 					if($_SESSION['invalid_captcha'])

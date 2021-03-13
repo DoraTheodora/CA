@@ -57,6 +57,17 @@
 											<br>
 											<img src="turtle.jpg" alt="Paris" width="auto" height="auto">
 											<div class="flex-col-c p-t-30">
+												<?php
+													if($_SESSION['is_admin']==true)
+													{
+														echo '<span class="txt1 p-b-2">
+																<a href="logs.php" class="txt2">
+																	Logs
+																</a>
+															</span>';
+
+													}
+												?> 
 												<span class="txt1 p-b-2">
 													<a href="profile.php" class="txt2">
 														Profile

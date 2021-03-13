@@ -66,7 +66,17 @@
                                 <div class="container-login100">
                                     <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
                                         <form class="login100-form validate-form">
-                                                <div class="flex-col-c p-t-30">
+                                                <div class="flex-col-c p-t-30">';
+													if($_SESSION['is_admin']==true)
+													{
+														echo '<span class="txt1 p-b-2">
+																<a href="logs.php" class="txt2">
+																	Logs
+																</a>
+															</span>';
+
+													}
+                                                echo '
                                                     <span class="txt1 p-b-2">
                                                         <a href="profile.php" class="txt2">
                                                             Profile

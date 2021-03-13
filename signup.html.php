@@ -35,6 +35,12 @@
         {
             $_SESSION['illegal_characters'] = false;
         }
+        if(!isset($_SESSION['signup_attempts']))
+        {
+            $_SESSION['signup_attempts'] = 0;
+        }
+
+        
 
     ?>
     <!DOCTYPE html>
@@ -78,7 +84,7 @@
                             if($_SESSION['username_exists'])
                             {
                                 echo "
-                                    <span class='error p-b-5'> <p> Username already is use </p></span>";
+                                    <span class='error p-b-5'> <p> The password cannot contain the username in it\nPlease try again </p> </span>";
                                 $_SESSION['username_exists'] = false;
                             }
                             if($_SESSION['passwords_not_matching'])
@@ -108,7 +114,7 @@
                             if($_SESSION['illegal_characters'])
                             {
                                 echo "
-                                    <span class='error p-b-5'> <p>Illegal characters were used in your username or password.</p>
+                                    <span class='error p-b-5'> <p>Illegal characters were used in your password.</p>
                                     <p>The following characters are not allowed:</p>
                                     <p>&nbsp;&nbsp;&nbsp;&nbsp; &amp  &lt  &gt  &#40  &#41  &#123  &#125
                                     &#91 &#93  &#34  &#39  &#59  &#47  &#92 </p>  </span>";
@@ -146,6 +152,7 @@
                                     Sign Up
                                 </button>
                             </div>
+                            <?php echo "Signup attempts ". $_SESSION['signup_attempts']; ?>
                         </div>
                     </form>
                 </div>

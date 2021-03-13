@@ -93,7 +93,7 @@
             }
             else
             {
-                log_activity("failed auth more than 5 times", $ip, $agent, "blocked");
+                log_activity("failed auth/signup more than 5 times", $ip, $agent, "blocked");
             }  
             $query->close();
         }
@@ -110,7 +110,7 @@
             } 
             else
             {
-                log_activity("failed auth more than 5 times", $ip, $agent, "blocked");
+                log_activity("failed auth/signup more than 5 times", $ip, $agent, "blocked");
             }
             $query->close();
         }
@@ -471,7 +471,7 @@
         if($query->execute())
         {
             log_activity("change password", $ip, $agent, "password changed");
-            echo "<script>alert('Password change!!')</script>";
+            echo "<script>alert('Password changed!')</script>";
             session_unset();
             session_destroy();
             header('Refresh:0 url=login.html.php');

@@ -82,7 +82,7 @@
     {
         require 'conf.php';
         $salt = generateSalt();
-        $to_hash = "Password1!" . $salt;
+        $to_hash = $salt."Password1!";
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];

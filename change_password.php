@@ -12,7 +12,6 @@
     check_session_id();
     if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"] && isset($_SESSION['CSRF_Token']))
 	{
-		echo $_SESSION["id_s"];
         $change_password = true;
         if(isset($_GET['existing_password']) && isset($_GET['pass1']) && isset($_GET['pass2']))
         {
