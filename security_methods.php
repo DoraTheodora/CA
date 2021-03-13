@@ -4,6 +4,20 @@
 //* Secure login system
 //* 2021
 
+    function delete_session_at_log_out()
+    {
+        require 'conf.php';
+        $ip = getIPAddress();
+        $agent = getClientAgent();
+        $client_session = filter($_COOKIE['sesh']);
+        $sql = "DELETE FROM ActiveSessions WHERE ip = ? AND clientAgent = ? AND session_id = ?";
+        $query = $conn->prepare($sql);
+        $query->bind_param("sss", $ip, $agent, $client_session);
+        if(!$query->execute())
+        {
+            "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
+        }
+    }
     function check_session_id()
     {
         require 'conf.php';
