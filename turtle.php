@@ -5,10 +5,10 @@
 	header('X-Frame-Options: DENY');
 	header('X-Content-Type-Options: nosniff');
 	session_cache_limiter('nocache');
-	require 'security_methods.php';
 	
 	session_start();
-	check_session_id();
+	require 'security_methods.php';
+    check_session_id();
 	if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"])
 	{
 		//echo $_SESSION["id_s"];

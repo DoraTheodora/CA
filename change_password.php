@@ -5,9 +5,11 @@
 	header('X-Frame-Options: DENY');
 	header('X-Content-Type-Options: nosniff');
 	session_cache_limiter('nocache');
+
     session_start();
     require 'conf.php';
     require 'security_methods.php';
+    check_session_id();
     if(isset($_SESSION["id_s"]) && session_id() == $_SESSION["id_s"] && isset($_SESSION['CSRF_Token']))
 	{
 		echo $_SESSION["id_s"];

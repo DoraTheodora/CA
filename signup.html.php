@@ -6,6 +6,7 @@
 	header('X-Frame-Options: DENY');
 	header('X-Content-Type-Options: nosniff');
 	session_cache_limiter('nocache');
+    
     session_start();
     is_user_locked();
     if($_SESSION['lockedTime'] < time())
