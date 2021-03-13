@@ -4,6 +4,37 @@
 //* Secure login system
 //* 2021
 
+    function check_session_id()
+    {
+        require 'conf.php';
+        $client_session = filter($_COOKIE['sesh']);
+        if($_COOKIE['sesh'] != $client_session)
+        {
+            header('Location: logout.php');
+        }
+        $ip = getIPAddress();
+        $agent = getClientAgent();
+        $sql = "SELECT session_id, ip, clientAgent FROM ActiveSessions WHERE session_id= ? AND ip = ? AND clientAgent = ? ";
+        $query = $conn->prepare($sql);
+        $query->bind_param("sss", $client_session, $ip, $agent);
+        $query->execute();
+        $result = $query->get_result()->fetch_assoc();
+        if(!empty($result))
+        {
+            $session = $result['session_id'];
+            if($session != $_COOKIE['sesh'])
+            {
+                header('Location: logout.php');
+            }
+        }
+        else
+        {
+            //"Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
+            header('Location: logout.php');
+        }
+        $query->close();
+    }
+
     function save_active_session()
     {
         require 'conf.php';
@@ -194,8 +225,10 @@
                 $_SESSION['max_idle_duration'] = 600;
                 $_SESSION['max_session_duration'] = time() + 3600;
                 $_SESSION["id_s"] = session_id();
-                $_COOKIE["id_s"] = session_id();
-                $_SESSION["name"] = $username;   
+                $_SESSION["name"] = $username; 
+                //! Cookie Values
+                setcookie('sesh', session_id(), $_SESSION['max_session_duration'], '/');
+                //! End Cookie Values
                 save_active_session(); 
                 if(is_admin($username))
                 {
