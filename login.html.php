@@ -10,7 +10,7 @@
 	session_cache_limiter('nocache');
 
 	session_start();
-	session_regenerate_id();
+	session_regenerate_id(generateRandomSessionID());
 	is_user_locked();
 	if(!isset($_SESSION['login_attempts']))
 	{

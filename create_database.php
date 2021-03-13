@@ -5,6 +5,8 @@
     header('X-Frame-Options: DENY');
     header('X-Content-Type-Options: nosniff');
     session_cache_limiter('nocache');
+    require 'security_methods.php';
+
     session_start();
     if(createDatabase())
     {
@@ -13,6 +15,7 @@
         create_admin();
         createNoGuests();
         createLog();
+        createSession();
         echo "<script>
                 alert('The database was created!'); 
                     window.location.href='login.html.php';
@@ -125,16 +128,19 @@
         $query->close();
     }
 
-    function generateSalt()
+    function createSession()
     {
-        $length = 96;
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $salt = "";
-        for($i = 0 ; $i < $length; $i++)
-        {
-            $index = rand(0, strlen($characters) -1);
-            $salt .= $characters[$index];
-        }
-        return $salt;
-    } 
+        require 'conf.php';
+        $sql = "CREATE TABLE ActiveSessions
+        (
+            id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            session_id VARCHAR(250) NOT NULL,
+            ip VARCHAR(250) NOT NULL,
+            clientAgent VARCHAR(500) NOT NULL,
+            date_time DATETIME(6)
+        )";
+        $query = $conn->prepare($sql);
+        $query->execute();
+        $query->close();
+    }
 ?>

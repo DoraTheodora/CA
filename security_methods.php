@@ -4,6 +4,24 @@
 //* Secure login system
 //* 2021
 
+    function save_active_session()
+    {
+        require 'conf.php';
+        $ip = getIPAddress();
+        $agent = getClientAgent();
+        $sess_id = session_id();
+        $start_date_time = date("Y-m-d H:i:s");
+
+        $sql = "INSERT INTO ActiveSessions(session_id, ip, clientAgent, date_time) VALUES (?, ?, ?, ?)";
+        $query = $conn->prepare($sql);
+        $query->bind_param("ssss", $sess_id, $ip, $agent, $start_date_time);
+        if(!$query->execute()) 
+        {
+            "Failed to connect to MySQL: (" . $query->connect_errno . ") " . $query->connect_error;
+        } 
+        $query->close();
+    }
+
     function lock_user()
     {
         require 'conf.php';
@@ -176,7 +194,9 @@
                 $_SESSION['max_idle_duration'] = 600;
                 $_SESSION['max_session_duration'] = time() + 3600;
                 $_SESSION["id_s"] = session_id();
-                $_SESSION["name"] = $username;    
+                $_COOKIE["id_s"] = session_id();
+                $_SESSION["name"] = $username;   
+                save_active_session(); 
                 if(is_admin($username))
                 {
                     $_SESSION["is_admin"] = true;
