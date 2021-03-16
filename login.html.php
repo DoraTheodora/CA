@@ -1,17 +1,21 @@
 <?php
 	//header("Content-Security-Policy: frame-ancestors 'none'", false);
 	//header('X-Frame-Options: SAMEORIGIN');
-	require 'security_methods.php';
 	header("Content-Security-Policy: frame-ancestors 'none'", false);
 	header('X-Frame-Options: SAMEORIGIN');
 	header('X-XSS-Protection: 1; mode=block');
 	header('X-Frame-Options: DENY');
 	header('X-Content-Type-Options: nosniff');
 	session_cache_limiter('nocache');
+	require 'security_methods.php';
+	require 'create_database.php';
 
 	session_start();
-
 	
+	if(database_exists() == false)
+	{
+		create_database();
+	}
 	is_user_locked();
 	if(!isset($_SESSION['login_attempts']))
 	{
@@ -77,7 +81,7 @@
 					if($_SESSION['incorrect_credentials'])
 					{
 						echo "
-							<span class='error p-b-5'> <p>"; echo $_SESSION['username']; echo ", the username or password is incorrect! Please try again </p> </span><br>";
+							<span class='error p-b-5'> <p> "; echo $_SESSION['username']; echo ", the username or password is incorrect! Please try again </p> </span><br>";
 						$_SESSION['incorrect_credentials'] = false;
 					}
 					if($_SESSION['invalid_captcha'])
@@ -152,12 +156,10 @@
                                 Sign Up
                             </a>
 						</span>
-                        <a href="create_database.php" class="txt2 p-t-100">
-							Create Database
-						</a>
-						<br>
-						<?php echo "Login attempts ". $_SESSION['login_attempts']; ?>
-                    </div>
+						<span>
+							<?php echo "<br><br> Login attempts ". $_SESSION['login_attempts']; ?>
+						</span>
+					</div>
                 </form>
             </div>
         </div>
@@ -166,5 +168,5 @@
 
 	<div id="dropDownSelect1"></div>
 </body>
-</html>
+</html> 
 

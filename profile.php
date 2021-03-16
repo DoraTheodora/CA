@@ -13,9 +13,9 @@
 	{
 		//echo $_SESSION["id_s"];
 		$idle_time = time() - $_SESSION['time_user_logged_in'];
-		echo "<br>Idle time: ".$idle_time."s";
+		echo "<br><h3>&nbsp;&nbsp;&nbsp;Idle time: ".$idle_time."s"."</h3>";
 		$max_time_allowed = time() - $_SESSION['max_session_duration'];
-		echo "<br>Max Time Allowed: ". $max_time_allowed."s";
+		echo "<br><h3>&nbsp;&nbsp;&nbsp;Max Time Allowed: ". $max_time_allowed."s"."</h3>";
 		if(time() - $_SESSION['time_user_logged_in'] > $_SESSION['max_idle_duration'])
 		{
 			header("Location: logout.php");
@@ -104,7 +104,7 @@
 	}
 	else
 	{
-		header("Location: login.html.php");
+		header("Location: logout.php");
 	}
 ?>
 </html>

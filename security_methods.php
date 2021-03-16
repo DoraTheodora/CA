@@ -124,7 +124,7 @@
     {
         $now = time();
         $diff = $now - $time_session_started;
-        if ($diff > 3000)
+        if ($diff > 3600)
         {          
             return true;
         }
@@ -301,15 +301,15 @@
 
     function generateRandomSessionID()
     {
-        $length = 64;
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $session_id = "";
-        for($i = 0 ; $i < $length; $i++)
+        $length = 96;
+        $id = '';
+        for($i = 0; $i < $length; $i++)
         {
-            $index = rand(0, strlen($characters) -1); //!RAND_INT
-            $session_id .= $characters[$index];
+            $num = random_int(0, 36);
+            $char = base_convert($num, 10, 36);
+            $id = $id.$char;
         }
-        return $session_id;
+        return $id;
     }
 
     function filter($toClean)
@@ -437,7 +437,7 @@
     {
         //! could contain something bad - sanitize it! can be spoofed
         //! store the session ID in the database while the user is online
-        return $_SERVER['HTTP_USER_AGENT'];
+        return filter($_SERVER['HTTP_USER_AGENT']);
     }
 
     function getIPAddress()
@@ -457,7 +457,7 @@
         {  
             $ip = $_SERVER['REMOTE_ADDR'];  
         }  
-        return $ip;  
+        return filter($ip);  
     }
 
     function change_password($username, $password)
@@ -477,9 +477,7 @@
         {
             log_activity("change password", $ip, $agent, "password changed");
             echo "<script>alert('Password changed!')</script>";
-            session_unset();
-            session_destroy();
-            header('Refresh:0 url=login.html.php');
+            header('Location: logout.php');
         }
         else
         {

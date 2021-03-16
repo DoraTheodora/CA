@@ -55,7 +55,7 @@
 												echo $_SESSION['name'];
 											?>! 
 											<br>
-											<img src="turtle.jpg" alt="Paris" width="auto" height="auto">
+											<img src="turtle.jpg" alt="turtle" width="auto" height="auto">
 											<div class="flex-col-c p-t-30">
 												<?php
 													if($_SESSION['is_admin']==true)
@@ -104,10 +104,7 @@
 	}
 	else
 	{
-		echo "<script>
-				alert('You are not logged in. Access denied'); 
-				window.location.href='login.html.php';
-			</script>";
+		header("Location: logout.php");
 	}
 ?>
 </html>

@@ -9,30 +9,32 @@
     header('X-Frame-Options: DENY');
     header('X-Content-Type-Options: nosniff');
     session_cache_limiter('nocache');
-    require 'security_methods.php';
+    //require 'security_methods.php';
 
-    session_start();
-    if(createDatabase())
+    function create_database()
     {
-        require 'conf.php';
-        createMyGuests();
-        create_admin();
-        createNoGuests();
-        createLog();
-        createSession();
-        echo "<script>
-                alert('The database was created!'); 
-                    window.location.href='login.html.php';
-            </script>";
-        session_unset();
-        session_destroy();
-    }
-    else
-    {
-        echo "<script>
-                alert('The database was not created!'); 
-                    window.location.href='login.html.php';
-            </script>";
+        if(createDatabase())
+        {
+            require 'conf.php';
+            createMyGuests();
+            create_admin();
+            createNoGuests();
+            createLog();
+            createSession();
+            echo "<script>
+                    alert('The database was created!'); 
+                        window.location.href='login.html.php';
+                </script>";
+            session_unset();
+            session_destroy();
+        }
+        else
+        {
+            echo "<script>
+                    alert('The database was not created!'); 
+                        window.location.href='login.html.php';
+                </script>";
+        }
     }
 
     function createDatabase()
@@ -46,10 +48,10 @@
         {
             die("ERROR: Could not connect. " . mysqli_connect_error());
         }
-    
-        // Attempt create database query execution
-        $sql = "CREATE DATABASE theodora";
         $created = false;
+        // Attempt create database query execution
+        $sql = "CREATE DATABASE IF NOT EXISTS theodora";
+        //$sql = "CREATE DATABASE theodora";
         $query = $link->prepare($sql);
         if($query->execute())
         {
@@ -85,11 +87,12 @@
     function create_admin()
     {
         require 'conf.php';
+        require_once 'security_methods.php';
         $salt = generateSalt();
         $to_hash = $salt."Password1!";
         $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
-        $ip = $_SESSION['ip'];
-        $agent = $_SESSION['clientAgent'];
+        $ip = getIPAddress();
+        $agent = getClientAgent();
         $user = "admin";
         $isAdmin = 1;
 
@@ -146,5 +149,22 @@
         $query = $conn->prepare($sql);
         $query->execute();
         $query->close();
+    }
+
+    function database_exists()
+    {
+        require 'conf_admin.php';
+        $sql = "SHOW DATABASES LIKE 'theodora'";
+        $query = $link->prepare($sql);
+        $query->execute();
+        $result = $query->get_result()->fetch_assoc();
+        if(empty($result))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 ?>

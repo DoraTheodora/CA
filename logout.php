@@ -9,7 +9,6 @@
     header("Expires: 0 "); // Proxies.
     require 'security_methods.php';
     
-    
 	session_cache_limiter('nocache');
     session_start();
     delete_session_at_log_out();
