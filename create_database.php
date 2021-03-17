@@ -71,12 +71,12 @@
         $sql = "CREATE TABLE MyGuests
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            user VARCHAR(250) NOT NULL,
-            passwd VARCHAR(250) NOT NULL,
-            salt VARCHAR(250) NOT NULL,
+            user VARCHAR(500) NOT NULL,
+            passwd VARCHAR(500) NOT NULL,
+            salt VARCHAR(500) NOT NULL,
             login_date DATETIME(6) NOT NULL,
             ip VARCHAR(250) NOT NULL,
-            clientAgent VARCHAR(250) NOT NULL,
+            clientAgent VARCHAR(500) NOT NULL,
             isAdmin INTEGER(5) NOT NULL
         )";
         $query = $conn->prepare($sql);
@@ -124,7 +124,7 @@
         $sql = "CREATE TABLE Logs
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            action_performed VARCHAR(250) NOT NULL,
+            action_performed VARCHAR(500) NOT NULL,
             ip VARCHAR(250) NOT NULL,
             clientAgent VARCHAR(500) NOT NULL,
             date_time DATETIME(6),
@@ -141,7 +141,7 @@
         $sql = "CREATE TABLE ActiveSessions
         (
             id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            session_id VARCHAR(250) NOT NULL,
+            session_id VARCHAR(500) NOT NULL,
             ip VARCHAR(250) NOT NULL,
             clientAgent VARCHAR(500) NOT NULL,
             date_time DATETIME(6)
