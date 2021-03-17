@@ -23,16 +23,7 @@
                 $username = filter($_POST['sign_up_username']);
                 $password2 = filter($_POST['pass2']);
                 $password1 = filter($_POST['pass1']);
-                if($password1 != $_POST['pass1'] ||$password2 != $_POST['pass2'])
-                {
-                    $ip = $_SESSION['ip'];
-                    $agent = $_SESSION['clientAgent'];
-                    log_activity("filter username and password", $ip, $agent, "illegal characters found");
-                    $create_user = false;
-                    $_SESSION['illegal_characters'] = true;
-                    header("Refresh:0");
-                }
-                else if (!$conn) 
+                 if (!$conn) 
                 {
                     die("Connection failed: " . mysqli_connect_error());
                 }

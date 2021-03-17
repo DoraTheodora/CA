@@ -49,10 +49,6 @@
 	{
 		$_SESSION['is_admin'] = false;
 	}
-	if(!isset($_SESSION['illegal_characters']))
-	{
-		$_SESSION['illegal_characters'] = false;
-	}	
 ?>
 
 <!DOCTYPE html>
@@ -89,16 +85,6 @@
 						echo "
 							<span class='error p-b-5'> <p>"; echo $_SESSION['username']; echo ", invalid captcha code! Please try again </p> </span> <br>";
 						$_SESSION['invalid_captcha'] = false;
-					}
-					if($_SESSION['illegal_characters'])
-					{
-						echo "
-							<span class='error p-b-5'> <p> "; echo $_SESSION['username']; echo " illegal characters were used in your username or password.</p>
-								<p>The following characters are not allowed:</p>
-								<p>&nbsp;&nbsp;&nbsp;&nbsp; &amp  &lt  &gt  &#40  &#41  &#123  &#125
-								&#91 &#93  &#34  &#39  &#59  &#47  &#92 </p>
-							</span>";
-						$_SESSION['illegal_characters'] = false;
 					}
 					//? send user to the blocked page if the page is locked
 					if($_SESSION['lockedTime'] > time())

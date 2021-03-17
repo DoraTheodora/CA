@@ -90,7 +90,7 @@
         require_once 'security_methods.php';
         $salt = generateSalt();
         $to_hash = $salt."Password1!";
-        $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
+        $hash_pass = hash("sha512", $to_hash);
         $ip = getIPAddress();
         $agent = getClientAgent();
         $user = "admin";

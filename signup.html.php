@@ -31,10 +31,6 @@
         {
             $_SESSION['username_in_password'] = false;
         }
-        if(!isset($_SESSION['illegal_characters']))
-        {
-            $_SESSION['illegal_characters'] = false;
-        }
         if(!isset($_SESSION['signup_attempts']))
         {
             $_SESSION['signup_attempts'] = 0;
@@ -110,15 +106,6 @@
                                 echo "
                                     <span class='error p-b-5'> <p> The password cannot contain the username in it\nPlease try again </p> </span>";
                                 $_SESSION['username_in_password'] = false;
-                            }
-                            if($_SESSION['illegal_characters'])
-                            {
-                                echo "
-                                    <span class='error p-b-5'> <p>Illegal characters were used in your password.</p>
-                                    <p>The following characters are not allowed:</p>
-                                    <p>&nbsp;&nbsp;&nbsp;&nbsp; &amp  &lt  &gt  &#40  &#41  &#123  &#125
-                                    &#91 &#93  &#34  &#39  &#59  &#47  &#92 </p>  </span>";
-                                $_SESSION['illegal_characters'] = false;
                             }
                         ?>
                         <br>

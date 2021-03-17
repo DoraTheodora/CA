@@ -21,14 +21,6 @@
             $CSRF_Token = filter($_GET['token']);
             $agent = getClientAgent();
             $ip = getIPAddress();
-            if($existing_pass != $_GET['existing_password'] || $password1 != $_GET['pass1'] ||$password2 != $_GET['pass2'])
-            {
-                log_activity("filter username and password", $ip, $agent, "illegal characters found");
-                $change_password = false;
-                $_SESSION['illegal_characters'] = true;
-                $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
-                header("Location: change_password.html.php");
-            }
             if($CSRF_Token != $_SESSION['CSRF_Token'])
             {
                 $change_password = false;

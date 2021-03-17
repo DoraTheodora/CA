@@ -188,7 +188,7 @@
                 $salt = $result['salt'];
                 $pass = $result['passwd'];
                 $to_hash = $salt . $password; //! SALT IS FIRST!!! - SO YOU CAN'T SEE WHERE THE PREDICTABILITY BEGINS
-                if(password_verify($to_hash, $pass))
+                if(hash("sha512", $to_hash) === $pass)
                 {
                     logIn($username, $pass, $conn);
                 }
@@ -341,7 +341,7 @@
     {
         $salt = generateSalt();
         $to_hash = $salt . $password;
-        $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
+        $hash_pass = hash("sha512", $to_hash);
         $ip = $_SESSION['ip'];
         $agent = $_SESSION['clientAgent'];
         $isAdmin = 0;
@@ -464,8 +464,8 @@
     {
         require 'conf.php';
         $salt = generateSalt();
-        $to_hash = $salt .$password;
-        $hash_pass = password_hash($to_hash, PASSWORD_ARGON2I);
+        $to_hash = $salt.$password;
+        $hash_pass = hash("sha512", $to_hash);
         $agent = getClientAgent();
         $ip = getIPAddress();
         $isAdmin = 0;
@@ -500,7 +500,7 @@
             $salt = $result['salt'];
             $pass = $result['passwd'];
             $to_hash = $salt .  $password;
-            if(password_verify($to_hash, $pass))
+            if(hash("sha512",$to_hash) === $pass)
             {
                 return true;
             }
