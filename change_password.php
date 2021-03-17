@@ -26,7 +26,7 @@
                 $change_password = false;
                 $_SESSION['CSRF_Message'] = True;
                 $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
-                log_activity("CSRF Attack", $ip, $agent, "CSRF Attack Attempted");
+                log_activity("Changing password", $ip, $agent, "CSRF Attack Attempted");
                 header("Location: change_password.html.php");
             }
             if (!$conn) 
@@ -39,6 +39,7 @@
                 $change_password = false;
                 $_SESSION['invalid_password'] = true;
                 $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
+                log_activity("Changing password", $ip, $agent, "Invalid credentials");
                 header("Location: change_password.html.php");
             }
             else if(!passwords_matching($password1, $password2))
@@ -46,6 +47,7 @@
                 $change_password = false;
                 $_SESSION['passwords_not_matching'] = true;
                 $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
+                log_activity("Changing password", $ip, $agent, "Password does not match password complexity ruless");
                 header("Location: change_password.html.php");
             }
             else if(new_pass_is_the_same_as_old_pass($password1, $existing_pass))
@@ -53,6 +55,7 @@
                 $change_password = false;
                 $_SESSION['new_pass_equals_old_pass'] = true;
                 $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
+                log_activity("Changing password", $ip, $agent, "Password does not match password complexity rules");
                 header("Location: change_password.html.php");
             }
             else if(!password_length($password1))
@@ -60,6 +63,7 @@
                 $change_password = false;
                 $_SESSION['password_too_short'] = true;
                 $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
+                log_activity("Changing password", $ip, $agent, "Password does not match password complexity rules");
                 header("Location: change_password.html.php");
             }
             else if(!password_has_all_required_characters($password1))
@@ -67,6 +71,7 @@
                 $change_password = false;
                 $_SESSION['password_needs_other_type_of_characters'] = true;
                 $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
+                log_activity("Changing password", $ip, $agent, "Password does not match password complexity rules");
                 header("Location: change_password.html.php");
             }
             else if(username_is_in_password($password1, $_SESSION['name']))
@@ -74,6 +79,7 @@
                 $change_password = false;
                 $_SESSION['username_in_password'] = true;
                 $_SESSION['CSRF_Token'] = bin2hex(random_bytes(64));
+                log_activity("Changing password", $ip, $agent, "Password does not match password complexity rules");
                 header("Location: change_password.html.php");
             }
             if($change_password)
