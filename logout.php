@@ -17,7 +17,6 @@
     
     session_id(generateRandomSessionID());
 	session_start();
-    //! session name needs to be stated start everytime before session start
-	setcookie('sesh', session_id(), time()+3600, '/');
+
     header('Location: login.html.php');
 ?>

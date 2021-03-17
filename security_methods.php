@@ -9,7 +9,7 @@
         require 'conf.php';
         $ip = getIPAddress();
         $agent = getClientAgent();
-        $client_session = filter($_COOKIE['sesh']);
+        $client_session = filter(session_id());
         $sql = "DELETE FROM ActiveSessions WHERE ip = ? AND clientAgent = ? AND session_id = ?";
         $query = $conn->prepare($sql);
         $query->bind_param("sss", $ip, $agent, $client_session);
@@ -22,8 +22,8 @@
     function check_session_id()
     {
         require 'conf.php';
-        $client_session = filter($_COOKIE['sesh']);
-        if($_COOKIE['sesh'] != $client_session)
+        $client_session = filter(session_id());
+        if($_COOKIE['PHPSESSID'] != $client_session)
         {
             header('Location: logout.php');
         }
@@ -37,7 +37,7 @@
         if(!empty($result))
         {
             $session = $result['session_id'];
-            if($session != $_COOKIE['sesh'])
+            if($session != $_COOKIE['PHPSESSID'])
             {
                 header('Location: logout.php');
             }
@@ -243,9 +243,6 @@
                 $_SESSION['max_session_duration'] = time() + 3600;
                 $_SESSION["id_s"] = session_id();
                 $_SESSION["name"] = $username; 
-                //! Cookie Values
-                setcookie('sesh', session_id(), $_SESSION['max_session_duration'], '/');
-                //! End Cookie Values
                 save_active_session(); 
                 if(is_admin($username))
                 {
